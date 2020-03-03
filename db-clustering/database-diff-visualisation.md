@@ -1,21 +1,21 @@
 # Visualising differences and similarities in multiple database schemas
 #### A primer with code examples for cloud and micro-services migration
 
-> We inherited this server with 1190 MSSQL databases after a small acquisition a few years ago. The database names are not very descriptive and we don't really know how it all works. We'd like to migrate it the cloud.
+> We inherited this server with 1,190 MSSQL databases after a small acquisition a few years ago. The database names are not very descriptive and we don't really know how it all works. We'd like to migrate them all to the cloud.
 
-I faced a similar problem on another project with multiple customer DBs sharing the same codebase and schema in theory, but not in practice. Most tools like [RedGate](https://www.red-gate.com/products/sql-development/sql-compare/) or [Apex](https://www.apexsql.com/sql-tools-diff.aspx) are good at comparing one DB to another. We wanted to compare them all to each other with visualisation, so I had to make my own tool.
+I faced a similar problem on another project with multiple customer DBs sharing the same codebase and schema in theory, but not in practice. Most tools like [RedGate](https://www.red-gate.com/products/sql-development/sql-compare/) or [Apex](https://www.apexsql.com/sql-tools-diff.aspx) are good at comparing one DB to another. We wanted to compare all databases to each other and visualise the results.
 
 #### Task at hand
-1. identify groups of similar DBs 
-2. calculate their similarity and divergence
-3. visualise the results
+1. Identify groups of similar DBs 
+2. Calculate their similarity and divergence
+3. Display the results as a diagram
 
 #### Solution overview
 A database schema is comprised of "objects" like user tables, views, stored procedures or functions. They are all listed in `sys.objects` table and their source code or definitions are stored in `sys.syscomments`. We could use data from those two tables to compare one DB to another:
 
 ## Collecting DB object data
 
-We'll need 2 tables: one to hold the list of objects, another to hold the numbers on how those objects are distributed across all the DBs.
+We'll need 2 tables: one to hold the list of objects and another to hold the numbers on how those objects are distributed across all the DBs.
 
 ![data structure](data-model.png)
 
@@ -33,7 +33,7 @@ ObjHash bigint
 )
 ```
 
-Populating the list of objects from all DBs can be done with very handy, but unofficial SP called `sp_MSforeachdb`. It is [not the most elegant and reliable method](https://www.mssqltips.com/sqlservertip/2201/making-a-more-reliable-and-flexible-spmsforeachdb/), but it works OK most of the time. 
+Populating the list of objects from all DBs can be done with a very handy, but unofficial SP called `sp_MSforeachdb`. It is [not the most elegant and reliable method](https://www.mssqltips.com/sqlservertip/2201/making-a-more-reliable-and-flexible-spmsforeachdb/), but it works OK most of the time. 
 
 ```sql
 exec master.sys.sp_MSforeachdb 
@@ -46,9 +46,9 @@ where type_desc in (''VIEW'', ''SQL_TABLE_VALUED_FUNCTION'', ''SQL_STORED_PROCED
 and DB_NAME() not in (''model'', ''tempdb'', ''msdb'')
 group by obj.name, obj.type_desc'
 ```
-The above code uses `sys.objects` table to get the list of objects of certain types and `sys.syscomments` table to get the source T-SQL code in a form of a checksum. Some system DBs are excluded. `master` DB is included in the list because it is quite common to create objects in it by mistake.
+The above code retrieves a list of objects of certain types from `sys.objects` table and their source T-SQL code from  `sys.syscomments` table. Some system DBs are excluded. `master` DB is included because it is quite common to create objects in it by mistake.
 
-We used two different metrics to calculate the similarity score: object names and object T-SQL code match. The score is permanently stored in `tDbSimilarityScore` table. 
+We used two different metrics to calculate the similarity score: object names and object T-SQL code match. The metrics are permanently stored in `tDbSimilarityScore` table. 
 
 ```sql
 drop table if exists tDbSimilarityScore
@@ -88,7 +88,7 @@ where exists (select 1 from tDbSimilarityScore tss2 where tss2.db1 = tss.db2 and
 ```
 It is an optional step. **Do not remove the duplication yet** - we will need the full *N x N* matrix for a pivot table later.
 
-## Calculating the score
+## Calculating similarity score
 
 The rest of the fields in `tDbSimilarityScore` are populated with update statements. It is a simpler and faster way than a single INSERT statement. The number of records involved is small enough not to worry about the performance.
 
@@ -156,7 +156,7 @@ select * from tDbSimilarityScore where db1 = 'reporting' order by db1, score des
 
 ![reporting example](reporting-compared.png)
 
-The correlation between all *REPORTING_...* DBs was quite high, but so was their code divergence. For example REPORTING and REPORTING_ROx have 19 objects with the same names, but different TSQL code. The other *REPORTING_...* DBs share approximately 1/2 of its object names with *REPORTING*, but 20% of them have differences in the source code. Some of the differences are there by design, but most of them can be merged onto a single code base.
+The correlation between all *REPORTING_...* DBs was quite high, but so was their code divergence. For example REPORTING and REPORTING_ROx have 19 objects with the same names, but different TSQL code. The other *REPORTING_...* DBs share approximately 1/2 of their object names with *REPORTING*, but 20% of them have differences in the source code. Some of the differences are there by design, but after a closer inspection we concluded that most of them can be merged onto a single code base.
 
 ## Similarity matrix
 The similarity and divergence between DBs can be visualised in an MS Excel matrix. This example uses a pivot table with conditional formatting. It takes only a couple of minutes to make.
@@ -164,15 +164,15 @@ The similarity and divergence between DBs can be visualised in an MS Excel matri
 ![matrix of all dbs](cust-dbs-matrix-zoom.png)
 
 1. Copy results of `select * from tDbSimilarityScore order by db1, score desc` into a blank Excel spreadsheet.
-2. Choose your comparison metric, e.g. *score*, and delete the others. You should have 3 columns left: *DB1*, *DB2*, *Score*
+2. Choose your comparison metric, e.g. *Score*, and delete the others. You should have 3 columns left: *DB1*, *DB2*, *Score*
 3. Create a pivot table in a new worksheet (click top menu *Insert*, then *Pivot table* on the far left)
 4. Drag column names (*DB1*, *DB2*, *Score*) inside the pivot table field panel to arrange them into a matrix.
    
   ![pivot fields](pivot-menu.png)
-  * You should get a matrix view similar to the one above, except for colouring.
-5. Select all the cells with *Score* values inside the matrix and add colour conditional on the cell's value (click on top menu *Home*, *Conditional Formatting*, *Colour Scales*) 
+  * You should now see a matrix view similar to the one above, but with no colouring.
+5. Select all the cells with *Score* values inside the matrix and add colour, conditional on the cell's value (click on top menu *Home*, *Conditional Formatting*, *Colour Scales*) 
 
-In the following example we compared only shared databases using different metrics.
+In the following example we compared shared databases using different metrics:
 * **Score**: how similar they are in their intent
 * **ScoreSquared**: same as above, but more spread out
 * **ScoreHash**: code divergence between similar DBs
