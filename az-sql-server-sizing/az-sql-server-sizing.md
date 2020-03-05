@@ -1,19 +1,22 @@
 # Estimating Azure SQL Server Size for on-prem migration
-#### A reducted copy of a report produced for migrating a real estate management system from on-prem to Azure
+#### This post is a reducted copy of a report produced for migrating a real estate management system from on-prem to Azure
 
 *The system we had to migrate had 1 DB per customer, a few system DBs and multiple web front-ends. Our task was to estimate ongoing cost of running the database part on Azure SQL.*
 
 ## Cost estimation methodology
 
-Microsoft provides a very useful [SQL server sizing calculator](https://dtucalculator.azurewebsites.net) for estimating [DTUs (Data Transaction Units)](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#single-database-dtu-and-storage-limits) needed to guarantee a certain performance level. DTUs can be mapped to different [service tiers](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#compare-the-dtu-based-service-tiers) and [pricing](https://azure.microsoft.com/en-us/pricing/details/sql-database/elastic/).
+Microsoft provides a very useful [SQL server sizing calculator](https://dtucalculator.azurewebsites.net) for estimating [DTUs (Data Transaction Units)](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#single-database-dtu-and-storage-limits) needed to guarantee a certain performance level. DTUs estimates can be later used to choose [service tiers](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#compare-the-dtu-based-service-tiers) and [pricing plans](https://azure.microsoft.com/en-us/pricing/details/sql-database/elastic/).
 
-1. Collect some representative on-prem performance data (`Processor Total / %`,`LogicalDisk Read/Write per sec`, `SQLServer Total\Log Bytes Flushed per sec`) using a PowerShell script. See [detailed instructions](https://dtucalculator.azurewebsites.net).
+1. Collect some representative on-prem performance data using a [PowerShell script](https://dtucalculator.azurewebsites.net) for a few key metrics:
+   * `Processor Total / %`,
+   * `LogicalDisk Read/Write per sec`
+   * `SQLServer Total\Log Bytes Flushed per sec` 
 2. Upload the log files from Step 1 to [Azure DTU calculator](https://dtucalculator.azurewebsites.net)
 3. Choose the best sizing option given the performance estimates.
 
 ## Estimating SQL Server I: Customer DBs
 
-The SQL databases were spread across two servers. *Server I* contained mostly customer DBs, one per customer. 
+Our SQL databases were spread across two servers. *Server I* contained mostly customer DBs, one per customer and *Server II* had system, reporting and other databases shared between customers and front end apps. 
 
 ![cust server info](sql-cust-server-info.png) ![customer server utilisation](sql-cust-server-utilisation.png)
 
@@ -52,7 +55,7 @@ This option is not directly applicable as we have multiple databases, but it is 
 
 ![customer server DTU utilisation as pool](customer-dtu-estimation-pool-labeled.png)
 
-The following graph is a good example of the 80/20 rule with 20% of DBs (32 out of 146) creating 80% of the load. Although, it is obvious from the graph that *tempdb* is [overused](https://dba.stackexchange.com/questions/19870/how-to-identify-which-query-is-filling-up-the-tempdb-transaction-log).
+Our workload appears to be a good fit for *SQL Pool* deployment with 20% of the DBs (32 out of 146) creating 80% of the load. Although, it is obvious from the graph that *tempdb* use [should be reduced](https://dba.stackexchange.com/questions/19870/how-to-identify-which-query-is-filling-up-the-tempdb-transaction-log).
 
 ![per customer utilisation](per-customer-utilisation.png)
 
@@ -83,7 +86,7 @@ Only a small number of frequently called and poorly performing queries would nee
 
 ## Estimating SQL Server II: Shared DBs
 
-This server contains databases used by front and back end apps, but they do not contain any customer data. Several databases contain replicas of some of customer data for a public facing website.
+This server contains databases used by front and back end apps, but they do not contain any customer data. Several databases contain replicas of some of customer data for a public-facing website.
 
 ![central server info](sql-central-server-info.png) ![central server utilisation](sql-central-utilisation.png)
 
@@ -127,12 +130,12 @@ S6 is ½ price of S7 and there is no in-between size. It may be possible to spli
 |IOPS|77.97%|94.83%|98.89%|99.89%|
 |LOG|100%|100%|100%|100%|
 |Annual cost|$2,568|$10,284|$20,580|$41,172|
-|Migrate as-is|Non-functional|Unusable|Some throttling, quite noticeable, errors|Minimal throttling, will be smoothed out|
+|   |Non-functional|Unusable|Some throttling, quite noticeable, errors|Minimal throttling, will be smoothed out|
 
 ### Performance improvements
 
-* Target size if radical improvements are made: S2
-* Target size if quick improvements are made: S4
+* **Target size with radical improvements**: S2
+* **Target size with minor improvements**: S4
 
 Most of the queries on this server are *SELECT*. A single database *PBLLOCATION* dominates with 67.44% of workload for the public-facing website.
 
@@ -141,21 +144,21 @@ Most of the queries on this server are *SELECT*. A single database *PBLLOCATION*
 There are a few relatively simple changes that can be enacted on top of the current architecture to greatly reduce the load on the databases:
 
 * Reduce the number of cross-DB queries ([Elastic Queries](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-elastic-query-overview#preview-limitations))
-* De-normalise the data model to reduce joins (more storage, but fewer and simpler queries)
+* De-normalise the data model to reduce joins in SQL queries
 * Re-arrange how the web pages are assembled
-* Use caching, e.g. Azure Redis with 13GB costs only $150 a month
+* Use caching, e.g. Azure Redis with 13GB [costs](https://azure.microsoft.com/en-us/pricing/details/cache/) only $150 a month
 
 **Target size after improvements**: S4 ($857/m).
 
 ![improvements with CDN](improvements-1.png)
 
 
-A more radical approach would be to replace the SQL databases with cheaper and more suitable technologies:
+A more radical approach would be to replace heavy use of SQL databases with cheaper and more suitable technologies:
 
 * Put all static objects behind a [CDN](https://azure.microsoft.com/en-us/services/cdn/)
 * Use a [Redis](https://azure.microsoft.com/en-us/services/cache/) (or similar) cache for frequently queried data
 * Use [ElasticSearch](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/elastic.elasticsearch) in place of SQL DB for non-transactional data
-* Limit SQL DB to being *the source of truth* and critical transactions
+* Limit SQL DB to being *the source of truth* and for critical transactions
 
 **Target pool size with newer architecture**: S2 ($214/m)
 
