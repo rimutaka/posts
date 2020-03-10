@@ -27,7 +27,7 @@ This guide is split into several practical sections. It doesn't offer all the ri
 
 ---
 
-## Home set up
+## Home-office set up
 
 The home worker should be a *productive team player* - not just **PRODUCTIVE**, but a **PRODUCTIVE TEAM PLAYER**. If you close your office now and ask everyone to work from home your team will run into a bunch of problems pretty quickly. 
 
@@ -50,7 +50,7 @@ Kids, flatmates, live-in parents, people coming and going. All these things can 
 * **Option 2**: relax the hours, focus on [*outcome* and *output*](https://hbr.org/2012/11/its-not-just-semantics-managing-outcomes).
   
 *I may drop off kids to school between 8am-9am, work until 2pm, do chores for an hour(my afternoon slump anyway), work some more until 5pm, then catch up with the backlog between 8pm - 11pm. I may take a break for a few minutes now and then to do some chores.*
-  > Set clear expectations of what is expected and some non-negotiable hours. It can be a big chaotic at the beginning, but if you keep focusing on the outcomes people will put whatever hours they need to achieve them. 
+  > Set clear expectations of what is expected and some non-negotiable hours. It can be a bit chaotic at the beginning, but if you keep focusing on the outcomes people will put whatever hours they need to achieve them. 
 
 #### Costs & savings
 
@@ -68,7 +68,7 @@ The biggest saving is probably the commute time. Reclaiming 33hrs is the equival
 * Extra heating in winter: $100
 * Faster internet: $50
 
-**Total monthly savings**: $170
+**Total monthly costs**: $170
 
 > Ask everyone to do their own cost/savings estimates, but make it clear there will be no penalties if they save.
 
@@ -77,13 +77,13 @@ The biggest saving is probably the commute time. Reclaiming 33hrs is the equival
 The speed and quality of the Internet connection is a key factor to being a productive remote worker:
 
 * slow connectivity is frustrating and even infuriating at times
-* it mentally changes the pace of everything - people just slow down or use it as an excuse
+* it slows down the pace and cadence of everything
 * audio and video calls become difficult
 
-Let's assume that a faster internet connection adds up to 10% gain in productivity: 
-* $100 per hour output * 0.1 * 8 * 22 = $1,760 increase in output per person. 
+Let's assume that a faster internet connection adds up to 10% extra productivity: 
+* $100 per hour output * 0.1 * 8 * 22 = $1,760 increase in output per month 
 
-> Make a spreadsheet with everyone's [speed test results](https://www.speedtest.net/) and decide if they need upgrading.
+> Make a spreadsheet with everyone's [speed test results](https://www.speedtest.net/) and decide if they need an upgrade.
 
 #### Hardware
 
@@ -94,13 +94,13 @@ Let's assume that a faster internet connection adds up to 10% gain in productivi
 * external data storage device
 * sitting or standing desk
 
-**Additional screens** give a huge boost to productivity. There are many types of [portable screens](https://www.amazon.com/s?k=portable%20monitor) that don't make your house look like a NASA mission control and don't take much space.
+**Additional screens** give a huge boost to productivity. There are many types of [portable screens](https://www.amazon.com/s?k=portable%20monitor) that don't make your house look like a NASA mission control and are easy to put away.
 
 *My laptop screen is the primary working window for typing this post. The monitor on the right has the browser for research. The monitor on the left has slack, zoom, skype, gmail and other distractions. I plan to add one more screen for note taking.*
 
 ![2.25m2 footprint](standing-desk.jpg)
 
-Some people like working with paper. Paying 50% for a **laser printer and consumables** will discourage any non-essential printing or even make your office completely paperless.
+Some people like working with paper. Paying 50% for a **laser printer and consumables** will discourage any non-essential printing.
 
 Many **home routers** are very old and very vulnerable. You may need to get your IT to verify it's up to scratch.
 
@@ -108,7 +108,7 @@ Many **home routers** are very old and very vulnerable. You may need to get your
 
 #### Cabin fever
 
-Even the most introverted of us need to get amongst their peers or colleagues. Some people cannot work in isolation at all. There is no hard and fast rule how to deal with that situation and people won't know until they actually try. 
+Even the most introverted of us need to get amongst their peers or colleagues. Some people cannot work in isolation at all. There is no hard and fast rule how to deal with that situation and people won't know how they feel about it all until they actually try. 
   > Consider getting a desk in the nearest shared office for those not under quarantine.
 
   ![share office](bizdojo-wellington.jpg)
@@ -117,7 +117,7 @@ Even the most introverted of us need to get amongst their peers or colleagues. S
 
 #### Family tension
 
-Other household members are probably used to you being away from home all day for work. They have their space and their routines. Your constant presence may impinge on that and lead to irritation that spills into other parts of family life. Demands to be quiet or not to distract only make it worse.
+Other household members are probably used to you being away from home all day for work. They have their way of using the space and their routines. Your constant presence may impinge on that and lead to irritation that spills into other parts of family life. Demands to be quiet or not to distract only make it worse.
 > Ask everyone to consider who may be affected to help them be better prepared.
 
 ---
@@ -146,7 +146,7 @@ The biggest hurdle for managers is letting go of the [old ways](https://www.forb
 
 > How do you currently track projects? 
 > 
-> How big of a change will it be to start using an online tool for it?
+> How big of a change will it be to start using an online project tracking tool?
 
 #### Meetings
 
@@ -160,9 +160,9 @@ Audio and [video conferencing](https://www.producthunt.com/search?q=video%20conf
 
 In the ideal world we all should be focused on *outcomes*. In reality, many office workers just put in "hours" because this is how the corporate machine has been designed. Enabling remote work is a unique opportunity to refocus on outcomes, or at least on outputs to begin with. It is a big [culture and mindset change](https://www.perdoo.com/the-ultimate-okr-guide).
 
-> What are your top 3 metrics used to calculate ones pay?
+> What are your top 3 metrics used to calculate one's pay?
 
-Usually you get what you pay for. Don't expect a change just because someone works remotely.
+Usually you get what you reward for. Don't expect a change just because someone works remotely.
 
 #### Innovation culture
 
@@ -172,13 +172,13 @@ Retreating to your own tasks and checking things off your list does not foster n
 
 ## New processes
 
-The office workflow does not apply well to remote teams. It becomes more asynchronous. The visibility of tasks and progress becomes a priority. The communication patterns change. It's as if someone emptied all the cogs from a machine onto the floor and you have to reassemble everything.
+The office workflow does not apply well to remote teams. People start communicating asynchronous. The visibility of tasks and progress becomes a priority. The whole team dynamic changes. It's as if someone emptied all the cogs from a machine onto the floor and you have to reassemble everything.
 
 ![new communication process](new-process.png)
 
 #### Remote first
 
-It is hard to get a smooth process with some people being remote while others continuing in the office. Those in the office use face to face communication, white boards and stick-it notes leaving the remotes in the dark.
+It is hard to get a smooth process with some people being remote while others continue working from the office. Those in the office use face to face communication, white boards and stick-it notes leaving the remotes in the dark.
 
 The solution to this is to be *"remote first"* - even those in the office have to communicate as if they were remote. If something was decided in a face to face meeting it has to be logged online for the rest of the team to see. Issue tracking, progress updates, and document sharing within the office should be done the same way as if you were remote.
 
@@ -192,9 +192,9 @@ Status update intervals must be discussed and agreed upon by all team members. I
 
 #### "Open plan" remote office
 
-Any work in progress, being ot written, edited, drawn or calculated should be saved to shared storage for others to see. There should be no need to ask "Where are you at with ...?" - check the task status or the file contents on the shared drive.
+Any work in progress, being it written, edited, drawn or calculated should be saved to shared storage for others to see. There should be no need to ask "Where are you at with ...?" - check the task status or the file contents on the shared drive.
 
-Another options is to use screen broadcasting, but that can be quite intrusive.
+Another option is to use screen broadcasting, but that can be quite intrusive.
 
 ---
 
@@ -206,7 +206,7 @@ There are hundreds of online collaboration and productivity tools for remote tea
 
 #### Collaboration tools
 
-There is plenty of good advice about collaboration tools for remote teams on the Internet. Read [here](https://www.collaborationsuperpowers.com/tools/), [here](https://www.producthunt.com/newsletter/4285) and [here](https://www.zdnet.com/article/remote-working-101-professionals-guide-to-the-tools-of-the-trade/). [ProductHunt](https://www.producthunt.com) is a good place to look for what others are using. [Capterra](https://www.capterra.com/web-conferencing-software/) can be a starting point for your research, if you can cut through the noise of paid listings and fake reviews.
+There is plenty of good advice about collaboration tools for remote teams on the Internet. Read [here](https://www.collaborationsuperpowers.com/tools/), [here](https://www.producthunt.com/newsletter/4285) and [here](https://www.zdnet.com/article/remote-working-101-professionals-guide-to-the-tools-of-the-trade/). [ProductHunt](https://www.producthunt.com) and [Capterra](https://www.capterra.com/web-conferencing-software/) are good starting points in search for new tools.
 
 > It does take time to find a set of tools that works for you.
 
@@ -254,7 +254,7 @@ Most of "remote-first" companies started as small software projects maintaining 
 
  Their evolutionary approach doesn't really apply to established businesses with "office-only" culture who are forced to go "remote" almost on the spot. One of the biggest differences between "remote-first" and "office-only" companies going remote is their people - "remote-first" companies only hire people who can and want to work remotely.
 
-**Let's learn from them now to minimise the risk of disruption and make your company a better place to work at the same time.**
+**We should learn from them now to minimise the risk of disruption and make our companies a better place to work at the same time.**
 
 ---
 
