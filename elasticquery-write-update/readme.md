@@ -1,7 +1,7 @@
 # Migration of Cross-DB Queries and Linked Servers from on-prem MS SQL to Azure ElasticQuery
-#### A practical guide for migrating SELECT, INSERT, UPDATE, DELETE and EXEC statements to ElasticQuery
+#### A practical guide for migrating SELECT, INSERT, UPDATE, DELETE and EXEC statements to ElasticQuery at scale
 
-This guide is based on experience gained during migration of a real-estate management system with 184 MS SQL databases from on-prem to Azure. It focuses on cross-database queries which became the major issue for the migration due to limitation of Azure SQL and Azure ElasticQuery.
+This guide is based on experience gained during migration of a real-estate management system with 184 MS SQL databases from on-prem to Azure. It focuses on cross-database queries which became the major issue for the migration due to limitations of Azure SQL and Azure ElasticQuery.
 
 On-prem cross-DB query example:
 
@@ -19,13 +19,13 @@ Msg 40515, Level 15, State 1, Line 16
 Reference to database and/or server name in 'srv_sql2008.central.dbo.tb_agency' is not supported in this version of SQL Server.
 ```
 
-The problem here is that Azure SQL uses a slightly different framework for accessing data between databases called [Elastic Query](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-elastic-query-overview). It is similar to [Linked Server](https://docs.microsoft.com/en-us/sql/relational-databases/linked-servers/linked-servers-database-engine) concept used by MSSQL with one major limitation - **it does not support INSERT, UPDATE or DELETE statements**. This limitation has some major implications for most on-prem multi-database systems trying to migrate to Azure.
+The problem here is that Azure SQL uses a slightly different framework for accessing data between databases called [Elastic Query](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-elastic-query-overview). It is similar to [Linked Server](https://docs.microsoft.com/en-us/sql/relational-databases/linked-servers/linked-servers-database-engine) concept used by MSSQL with one major limitation - **it does not support DML operations like INSERT, UPDATE or DELETE**. That limitation is a major impediment for most on-prem multi-database systems trying to migrate to Azure.
 
-*It is puzzling why Microsofts has not implemented such important and commonly used feature of MS SQL in Azure. Their suggested workaround is to use a remote procedure call, which doesn't fully address the problem. Migrating a system with hundreds or thousands of INSERT / UPDATE / DELETE statements that have to be converted into remote SP calls is bound to be costly.*
+*It is puzzling why Microsofts has not implemented such important and commonly used feature of MS SQL in Azure. Their suggested workaround is to use a remote procedure call, which doesn't fully address the problem. Migrating a system with hundreds or thousands of INSERT / UPDATE / DELETE statements that have to be converted into remote SP calls is a costly undertaking.*
 
 **We implemented a solution that allowed us to minimize the cost of migration by automating the code refactoring in views, functions and stored procedures to comply with Azure ElasticQuery limitations.**
 
-# Mirror-tables alternative for ElasticQuery INSERT/UPDATE/DELETE
+# Mirror-table alternative for using INSERT/UPDATE/DELETE with ElasticQuery 
 
 The core idea was to create mirror objects for tables and stored procedures to make DML (INSERT/UPDATE/DELETE) operations appear local and abstract the remote part of the interaction.
 
@@ -208,36 +208,37 @@ Popular tools like [RedGate](https://www.red-gate.com/products/sql-development/s
 
 #### A note on testing
 
-Testing SQL code after making manual changes would be very expensive. We had nothing in terms of test harness or even understanding what the code does. Some SPs ran into hundreds of lines of code with very intricate business logic. It wouldn't take much to break that.
+Testing SQL code after making manual changes would be very expensive. We had nothing in terms of a test harness or even understanding what the code does. Some SPs ran into hundreds of lines of T-SQL code with very intricate business logic. It wouldn't take much to break that.
 
 **Our goal was to devise a robust refactoring process** that can be tested on a small subset of code and then applied to the entire codebase with minimal risk of breaking anything.
 
 ## Step 1: Code analysis
 
-The target for our search were multipart object names in SQL statements. We used two different search methods:
+The target for our search was multipart object names in SQL statements. We used two different search methods:
 
-* Look for dependencies in system tables. E.g. https://www.red-gate.com/simple-talk/blogs/discovering-three-or-four-part-names-in-sql-server-database-code/
-* Use Regex to look through the source code. 
+* Looking for dependencies in system tables. E.g. https://www.red-gate.com/simple-talk/blogs/discovering-three-or-four-part-names-in-sql-server-database-code/
+* Using Regex to search through the source code. 
 
-Regex was the primary method with system table search as backup and for validation of Regex results.
+Regex was the primary method with the system table search as a backup for validation of Regex results.
 
 Our very first step was to script all DB objects from all DBs and add them to Git. 
 
 Suitable scripting tools:
 * SSMS Script DB objects feature via [MS Docs](https://docs.microsoft.com/en-us/sql/ssms/tutorials/scripting-ssms)
-* PowerShell/TSQL via [MSSQL Tips](https://www.mssqltips.com/sqlservertip/4606/generate-tsql-scripts-for-all-sql-server-databases-and-all-objects-using-powershell/)
+* PowerShell/T-SQL via [MSSQL Tips](https://www.mssqltips.com/sqlservertip/4606/generate-tsql-scripts-for-all-sql-server-databases-and-all-objects-using-powershell/)
 * SchemaZen via [Github](https://github.com/sethreno/schemazen) / C#
 * MSSQL Scripter via [Github](https://github.com/Microsoft/mssql-scripter) / Python
+* DB Diff via [Github](https://github.com/OpenDBDiff/OpenDBDiff) / C#
 
 #### Important considerations for scripting
 
 1. **Consistency** - all scripts must follow the same pattern to produce meaningful diffs.
-2. **Idempotency** - generate DROP with IF EXISTS for every CREATE to re-run the scripts as many times as you need.
-3. **No** *USE [db name]* - it is not supported by AZ SQL and will get in the way if you need to re-create objects there.
+2. **Idempotency** - generate DROP with IF EXISTS for every CREATE to re-run the scripts as many times as needed.
+3. **No** *USE [db name]* - it is [not supported by AZ SQL](https://docs.microsoft.com/en-us/sql/t-sql/language-elements/use-transact-sql) and will get in the way if you need to re-create objects there.
 4. **Minimalism** - generate scripts only for what you need. Any extra code or comments will get in the way.
 5. **One file per DB object**: you will need to diff and apply changes per object, so it's better to store them as separate files. 
 
-We committed the very first output of the script generator to Git, one repo per DB. Then we combined them all under a single SSMS solution, one DB per project. That gave us the full power of SSMS UI while giving us a complete track record of all changes from then on.
+We committed the very first output of the script generator to Git, one repo per DB. Then we combined them all under a single SSMS solution, one DB per project. That gave us the full power of SSMS UI with tracking of all code changes from then on.
 
 #### Search strategies
 
@@ -247,7 +248,7 @@ I don't think a single winning strategy for finding multipart names exists becau
 ```bash
 grep -i -r -n --include '*.sql'  -E '\binsert\s*into\s*\[?CITI_\w+\]?\.\[?\w*\]?\.\[?\w*\]?' . > cross-db-insert-grep.txt
 ```
-Our search was aided by a simple naming convention that all DB names were starting with prefix `CITI_`. You will encounter that prefix in a few places in few of our examples. Modify our Regex to match your naming convention, if such exists.
+Our search was aided by a simple naming convention that all DB names were starting with prefix `CITI_`. You will encounter that prefix in most of our examples. Modify our Regex to match your naming convention, if such exists.
 
 **Sample GREP output** 
 ```
@@ -262,7 +263,7 @@ Every line of the output contains:
 * procedure name (*sp_AddChannelInPBL*)
 * the exact line number where the change to the object name must be made (*:28:*)
 
-The grep output was used as input into AZPM utility that did the name changes from 4-part to mirror/proxy. That gave us a chance to review the code and remove lines that didn't need to be modified. It was a more robust way of doing global renaming than running a blind search-and-replace.
+The GREP output was used as input into AZPM utility that did the name changes from 4-part to mirror/proxy. We reviewed all GREP files and removed lines that didn't need to be modified or modified them by hand if they fell outside the normal pattern. It was a more robust way of doing global renaming than running a blind search-and-replace.
 
 #### Search variations
 
@@ -283,7 +284,7 @@ EXEC (@Query)
 
 Those queries can be extremely hard to find. We were lucky because all 4-part names in our dynamic SQL had the same `@dbName` variable.
 
-#### Some handy Regex queries
+#### Regex queries
 These are a few examples of regex queries we used on our GREP output to clean it up.
 
 * Files ending in 'Database.sql': `^.*\.Database\.sql:.*$` 
@@ -298,13 +299,13 @@ These are a few examples of regex queries we used on our GREP output to clean it
 
 #### Unused SQL code
 
-There was a good part of the codebase that was no longer used. We just didn't know which one. Removing tables, views, functions and procedures that were no longer used could save us a lot of pain later in the process. In the hind sight, we should have invested some time in identifying and removing them before doing the 4-part name analysis.
+There was a good part of the codebase that was no longer used. Removing unused tables, views, functions and procedures could save us a lot of pain later in the process. In the hind sight, we should have invested some time in identifying and removing them before at the very beginning.
 
 Dropping unused objects is risky. It may take a while to trace application errors to missing objects if they were dropped by mistake. Instead of dropping we replaced the body with an error message in Stored Procedures:
 ```sql
 THROW 51000, 'Removed for Azure SQL compatibility. See Jira issues for details.', 1;
 ```
-and an error-generation statements in User Defined Functions (can't use *THROW* in those):
+and an error-generating statement in User Defined Functions (can't use *THROW* in those):
 ```sql
 BEGIN
 		declare @x int
@@ -312,17 +313,17 @@ BEGIN
 		return null
 END
 ```
-We also set an alarm in Azure Monitor to look for those error messages in the log stream to catch them quickly.
+We also set up an alarm in Azure Monitor to look for those error messages in the log stream to catch them quickly.
 
 #### End result
 
-The truth is that the code analysis "ended" only when the DBs were successfully imported into AZ SQL. We had to come back to fix the grep output, re-run the global replace and re-create SQL objects again and again until all the issues were resolved. It was very important to keep the process idempotent and fully scripted.
+The truth is that the code analysis stage "ended" only when the DBs were successfully imported into AZ SQL. We had to come back to fix the grep output, re-run the global replace and re-create SQL objects again and again until all the issues were resolved. It was very important to keep the process idempotent and fully scripted.
 
 ## Steps 2-3: Generating mirror / proxy templates
 
 AZPM, the CLI utility we created to help with refactoring generated all the proxy and mirror objects using config files and SQL templates. For example, to create an external table you have to provide the full table definition with field names and their data types. We automated the process by using templates and automatically retrieving table definitions.
 
-The following is a template for generating an external table:
+The following is an example of a template for generating an external table:
 
 ```sql
 if exists(select 1 from sys.external_tables where [name] ='ext_{0}__{2}')
@@ -371,9 +372,9 @@ By this time in the process, we had all necessary mirror and proxy objects gener
 ```powershell
 azpm.exe replace -t ext_{1}__{2} -g C:\migration-repo\cross-db-exec-grep-4v.txt
 ```
-where `ext__{1}__{2}` is the renaming template and `cross-db-exec-grep-4v.txt` is sanitised grep output from the previous steps.
+where `ext_{1}__{2}` is the renaming template and `cross-db-exec-grep-4v.txt` is a sanitised GREP output file from the previous steps.
 
-The utility goes through every line in the grep output file and modifies the original names according to the template like in this example:
+The utility goes through every line in the GREP output file and modifies the original names according to the template like in this example:
 ```sql
 exec PBL_Location.dbo.sp_RemoveObjectLocation @ObjectLocationId, @ChannelId
 exec ext__PBL_Location__sp_RemoveObjectLocation @ObjectLocationId,@ChannelId
@@ -382,13 +383,13 @@ exec ext__PBL_Location__sp_RemoveObjectLocation @ObjectLocationId,@ChannelId
 All modified files can be applied using auto-generated PowerShell scripts similar to this one:
 
 ```powershell
-sqlcmd -b -S "."  -d citi_central -i "dbo.sp_InsertPasta.StoredProcedure.sql" 
+sqlcmd -b -S "."  -d central -i "dbo.sp_InsertPasta.StoredProcedure.sql" 
 if ($LASTEXITCODE -ne 0) {git reset "dbo.sp_InsertPasta.StoredProcedure.sql"}
 ```
 
 ## Step 5: Exporting for Azure SQL
 
-The export process is simple enough and fits into a single PowerShell line:
+The [export process](https://docs.microsoft.com/en-us/sql/tools/sqlpackage#export-parameters-and-properties) is simple enough and fits into a single PowerShell line:
 ```powershell
 sqlpackage.exe /Action:Export /ssn:127.0.0.1 /su:sa /sp:$pwd /sdn:$db /tf:$fileName #/d:True
 ```
@@ -437,7 +438,7 @@ foreach ($db in $dbs) {
 }
 ```
 
-There is a good chance you'll have to run this script quite a few times before all of the incompatibilities get resolved. Keep in mind that SqlPackage utility does not parse dynamic SQL. Your DB may export successfully and then fail to work as expected because of the multipart names in those parts of your code.
+There is a good chance you'll have to run this script quite a few times before all of the incompatibilities get resolved. Keep in mind that SqlPackage utility does not parse dynamic SQL. Your DB may export successfully and then fail to work as expected because of the multipart names in dynamic SQL parts of your code.
 
 ---
 
