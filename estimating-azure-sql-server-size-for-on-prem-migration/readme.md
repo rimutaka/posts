@@ -1,11 +1,11 @@
 # Estimating Azure SQL Server Size for on-prem migration
-#### This article is a real-file example of estimating monthly running costs for a system with multiple MS SQL databases after migrating from "on-prem" to Azure
+#### This article is a real-file example of estimating monthly running costs for a system with multiple MS SQL databases after migrating from "on-prem" to Azure.
 
 *Estimating the cost of migration from on-prem to the cloud should always include the running cost over the lifetime of the solution, not just the cost of labor to migrate. This report demonstrates how a low-cost migration results in high running costs that can be reduced by investing in code refactoring and architecture changes.*
 
 ## Background
 
-The real estate management system we had to migrate was hosted on 2 bare-metal servers in a local data center. *Server I* contained mostly customer DBs, one per customer and *Server II* had system, reporting and other databases shared between customers and front-end apps.
+The real estate management system we had to migrate was hosted on two bare-metal servers in a local data center. *Server I* contained mostly customer DBs, one per customer and *Server II* had system, reporting and other databases shared between customers and the front-end apps.
 
 ![intro](intro.png)
 
@@ -65,7 +65,7 @@ Azure Server Sizing Calculator has 2 options: *Single DB* and *DB Pool*. The sin
 
 ![customer server DTU utilization as pool](customer-dtu-estimation-pool-labeled.png)
 
-In out case 20% of the DBs (32 out of 146) create 80% of the load. It may be more efficient to group the top-N databases into a separate pool to even out the performance per DB.
+In our case, 20% of the DBs (32 out of 146) create 80% of the load. It may be more efficient to group the top-N databases into a separate pool to even out the performance per DB.
 
 ![per customer utilization](per-customer-utilisation.png)
 
