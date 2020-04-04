@@ -1,31 +1,29 @@
 # Estimating Azure SQL Server Size for on-prem migration
-#### A example of estimating monthly running costs for a system with multiple MS SQL databases after migrating from on-prem to Azure
+#### This article is a real-file example of estimating monthly running costs for a system with multiple MS SQL databases after migrating from "on-prem" to Azure
 
-*Estimating the cost of migration from "on-prem" to the cloud should always include the running cost over the lifetime of the solution, not just the cost of labor to migrate. This report demonstrates how a low-cost migration results in high running costs that can be reduced by investing in code refactoring or architectural changes.*
+*Estimating the cost of migration from on-prem to the cloud should always include the running cost over the lifetime of the solution, not just the cost of labor to migrate. This report demonstrates how a low-cost migration results in high running costs that can be reduced by investing in code refactoring and architecture changes.*
 
 ## Background
 
-The real estate management system we had to migrate was hosted on 2 servers in a local data center. The data was partitioned into one DB per customer and several central DBs with shared data such as reports, lists of values and financial transactions.
-
-Our SQL databases were spread across two servers. *Server I* contained mostly customer DBs, one per customer and *Server II* had system, reporting and other databases shared between customers and front end apps.
+The real estate management system we had to migrate was hosted on 2 bare-metal servers in a local data center. *Server I* contained mostly customer DBs, one per customer and *Server II* had system, reporting and other databases shared between customers and front-end apps.
 
 ![intro](intro.png)
 
 
 ## Cost estimation methodology
 
-Microsoft offers a unified measure of Azure SQL performance called [Data Transaction Units (DTU)](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#single-database-dtu-and-storage-limits). Their [SQL server sizing calculator](https://dtucalculator.azurewebsites.net) can estimate the number of DTUs needed for a certain performance level. DTUs estimates can be later used to choose [service tiers](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#compare-the-dtu-based-service-tiers) and [pricing plans](https://azure.microsoft.com/en-us/pricing/details/sql-database/elastic/). The standard process consists of 3 steps:
+Microsoft offers a unified measure of Azure SQL performance called [Data Transaction Units (DTU)](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#single-database-dtu-and-storage-limits). Their [SQL server sizing calculator](https://dtucalculator.azurewebsites.net) can estimate the number of DTUs needed for a certain performance level of an SQL database. DTUs estimates can be used to choose [service tiers](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-service-tiers-dtu#compare-the-dtu-based-service-tiers) and [pricing plans](https://azure.microsoft.com/en-us/pricing/details/sql-database/elastic/). The standard process consists of 3 steps:
 
-1. Collect some representative "on-prem" performance data using a [PowerShell script](https://dtucalculator.azurewebsites.net) for a few key metrics:
+1. Collect some representative on-prem performance data using a [PowerShell script](https://dtucalculator.azurewebsites.net) for a few key metrics:
    * `Processor Total / %`,
    * `LogicalDisk Read/Write per sec`
    * `SQLServer Total\Log Bytes Flushed per sec` 
 2. Upload the log files from Step 1 to [Azure DTU calculator](https://dtucalculator.azurewebsites.net)
-3. Choose the best sizing option given the performance estimates.
+3. Choose the best sizing option based on the performance estimates.
 
-## Estimating SQL Server I: Customer DBs
+## Estimating SQL Server I: *Customer DBs*
 
-This server was running on 7-year-old hardware with Windows Server 2012 on [End of Life support](https://support.microsoft.com/en-us/lifecycle/search?alpha=Windows%20Server%202012%20Standard).
+*Server I* was running on 7-year-old hardware with Windows Server 2012 on [End of Life support](https://support.microsoft.com/en-us/lifecycle/search?alpha=Windows%20Server%202012%20Standard).
 
 ![cust server info](sql-cust-server-info.png) ![customer server utilization](sql-cust-server-utilisation.png)
 
@@ -36,7 +34,7 @@ This server was running on 7-year-old hardware with Windows Server 2012 on [End 
 * Microsoft SQL Server 2012 (SP4) Standard Edition (64-bit)
 
 #### Equivalent server size recommended by Azure calculator
-This recommendation was based on Server I performance logging.
+This recommendation was based on *Server I* performance logging.
 * S4 / 200 DTU
 * 91.75% of the sample
 * 9.25% throttling
@@ -45,8 +43,8 @@ This recommendation was based on Server I performance logging.
 * $10,284 per year
 
 
-#### Server size based on a pessimistic assessment
-Azure recommendations are too optimistic and would result in throttling. The next tier up should fully cover the peak load.
+#### Equivalent server size based on a pessimistic assessment
+Azure recommendations may be too optimistic and would result in throttling. Choosing the next tier up (S6) should fully cover the peak load.
 
 * S6 / 400 DTU
 * 99.89% of the sample
@@ -57,28 +55,26 @@ Azure recommendations are too optimistic and would result in throttling. The nex
 
 **Single DB estimate**
 
-Azure Server Sizing Calculator has 2 options: Single DB and DB Pool. The single database option is not directly applicable here because we have multiple databases, but it is still an indication of expected performance.
+Azure Server Sizing Calculator has 2 options: *Single DB* and *DB Pool*. The single database option is not directly applicable here because we have multiple databases, but it is still a good indication of expected performance.
 
 ![customer server DTU utilization](customer-dtu-estimation-throttling.png)
 
 **Elastic Pool estimate**
 
-*Elastic Pool* estimates are more complicated because there are [utilization limitations](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-elastic-pool#when-should-you-consider-a-sql-database-elastic-pool) per pool as well as per single database. An *Elastic Pool* works best when DBs have low average utilization with high peaks. A constant high load requires a higher service tier than it may appear.
+*Elastic Pool* estimates are more complicated because there are [utilization limitations](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-elastic-pool#when-should-you-consider-a-sql-database-elastic-pool) per pool as well as per single database. An *Elastic Pool* works best when DBs have low average utilization with high peaks. A constant high load in one of the pooled DBs requires a higher service tier for the entire pool. Azure SQL databases can be easily [re-arranged into multiple pools](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-elastic-pool-manage) to optimize the load. 
 
 ![customer server DTU utilization as pool](customer-dtu-estimation-pool-labeled.png)
 
-Our workload appears to be a good fit for *SQL Pool* deployment with 20% of the DBs (32 out of 146) creating 80% of the load.
+In out case 20% of the DBs (32 out of 146) create 80% of the load. It may be more efficient to group the top-N databases into a separate pool to even out the performance per DB.
 
 ![per customer utilization](per-customer-utilisation.png)
 
-Not that the second busiest database in the graph is *tempdb*. It is obviously overused and there is [some room for improvement](https://dba.stackexchange.com/questions/19870/how-to-identify-which-query-is-filling-up-the-tempdb-transaction-log).
-
-It may be more efficient to group the top-N databases into a separate pool to even out the performance per DB.
+Note that the second busiest database in the graph is *tempdb*. It is obviously overused and there is [some room for improvement](https://dba.stackexchange.com/questions/19870/how-to-identify-which-query-is-filling-up-the-tempdb-transaction-log).
 
 
 #### Utilization breakdown
 
-The current on-prem hardware does not suffer from overloading and the end users are used to consistent server response time. The optimal tier choice should be the one above 100% utilization to maintain a comparable level of user experience. 
+The current on-prem hardware does not suffer from overloading and provides consistent server response time. The optimal tier choice should be the one above 100% utilization to maintain a comparable level of user experience. 
 
 ![DTU estimate breakdown](customer-dtu-est-breakdown-labeled.png)
 
@@ -101,9 +97,9 @@ Only a small number of frequently called and poorly performing queries would nee
 
 ---
 
-## Estimating SQL Server II: Shared DBs
+## Estimating SQL Server II: *Shared DBs*
 
-This server contains databases used by front and back-end apps, but they do not contain any customer data. Several databases contain extracts from the customer data for public-facing websites.
+*Server II* contains databases used by front-end and back-end apps, but they do not contain any customer data. Several databases contain extracts from customer databases for the public-facing website.
 
 ![central server info](sql-central-server-info.png) ![central server utilization](sql-central-utilisation.png)
 
@@ -131,7 +127,7 @@ This server contains databases used by front and back-end apps, but they do not 
 * $3,431 per month
 * $41,172 per year
 
-S6 tier is ½ price of S7 and there is no in-between size. It may be possible to split these databases into 2 smaller pools for more optimal utilization.
+S7 tier is x2 price of S6, which is a significant jump and there is no in-between size. It may be possible to split databases from *Server II* into several smaller pools for more optimal utilization.
 
 **Single DB estimate**
 
@@ -159,11 +155,11 @@ S6 tier is ½ price of S7 and there is no in-between size. It may be possible to
 * **Target size with minor improvements**: S4
 * **Target size with radical improvements**: S2
 
-Most of the queries on *Server II* are *SELECTs*. A single database *PBLLOCATION* dominates with 67.44% of the workload for public-facing websites as evident from the graph below.
+Most of the queries on *Server II* are *SELECTs*. A single database *PBLLOCATION* dominates with 67.44% of the workload for the public-facing website as evident from the graph below.
 
 ![shared DB utilization](per-shared-util.png)
 
-There are a few relatively simple changes that can be enacted on top of the current architecture to greatly reduce the load on the databases:
+Apart from improving poorly performing SQL queries, there are a few relatively simple changes that can be applied on top of the current architecture to greatly reduce the load on *Server II*:
 
 * Reduce the number of cross-DB queries ([Elastic Queries](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-elastic-query-overview#preview-limitations))
 * De-normalise the data model to reduce joins in SQL queries
