@@ -3,40 +3,44 @@
 
 *It can take a long time to prepare a system for migration to a cloud environment. There is a chance that the production codebase has changed during that time. This post offers a simple solution for identifying and merging such changes. The post is very specific to Azure migration and is unlikely to be of interest in any other context.*
 
-Our cloud migration project took 3 months from taking a snapshot of all production databases to making the code fully compatible with Azure SQL. In the meantime, the SQL code in production changed in a few places. We simply assumed that [there may also be any number of unknown changes](https://en.wikipedia.org/wiki/Universal_precautions) that have to be merged into the migration code and performed full code comparison before the final merge and deployment to Azure.
+Our cloud migration project took 3 months from taking a snapshot of all production databases to making the code fully compatible with Azure SQL. In the meantime, the SQL code in production changed to keep up with customer requests and bug fixes. We decided to ignore the changes until the very end of migration to compared and merged the entire codebase in a single sweep. The decision was based on the [universal precaution approach](https://en.wikipedia.org/wiki/Universal_precautions) because there could also be any number of untracked changes.
+
+This diagram illustrates the relationship between DB codebase and the Git repository as a timeline. 
 
 ![process diagram deployment](process-diagram-dep.png)
 
 ## Background
 
-The system consisted of two types of MS SQL databases: customer and shared (central) databases.
+The system consisted of two types of MS SQL databases: *customer* and *shared* (central) databases.
 
-Every customer had a separate DB with a standardized schema and identical (in theory) codebase. Every shared DB had a different schema and codebase. All DBs were tightly interlinked via cross-DB SQL queries.
+Every customer had a separate DB with a standardized schema and identical (in theory) codebase. Every shared DB had a different schema and codebase. All databases were tightly interlinked via cross-DB SQL queries.
 
 ![cust vs shared](cust-vs-shared.png)
 
 #### Customer databases
 
-*Customer DBs* have data specific to a single customer, but share the same code base. In practice, there are minute difference in their code as well. **We are only concerned with the differences that affect AZ compatibility and can safely ignore any other differences.**
+*Customer DBs* had data specific to a single customer, but shared the same codebase. In practice, there were minute differences in the codebase as well. E.g. customer-specific code and accumulation of Dev-Ops errors.
 
-Naming convention:
+**Only the differences affecting AZ compatibility would have to be identified and merged.**
+
+Naming conventions:
 
 * `c_4vallees_base` - the original customer DB snapshot taken for development
-* `c_4vallees_model` - a copy of snapshot customer DB modified for AZ
-* `c_4vallees` - the latest production copy of the same customer DB
+* `c_4vallees_model` - *c_4vallees_base* modified for AZ
+* `c_4vallees` - the latest copy from production
 * `c_8hdke93`, `c_a83hdk2`, `c_hdj3ud5` - the latest production copies of other customer DBs
 
 #### Shared databases
 
-*Shared DBs* have function and code that are specific to that DB only. No code is shared between them.
+*Shared DBs* have schema and code that are specific to each DB. No code is shared between them.
 
 * `central`, `helpdesk`, `reporting` - latest production copies
 * `central_base`, `helpdesk_base`, `reporting_base` - original snapshots taken for development (before any AZ modifications)
 
 
-## What compares to what
+## Merge sequence
 
-So we take 3 sets of T-SQL code from DBs:
+We start with 3 sets of T-SQL code for each database:
 * `base` - the original snapshot before AZ mods
 * `model` - a modified snapshot that works on AZ
 * `prod` - the latest copy from production
@@ -47,13 +51,13 @@ and compare them in this order
 2. `base` to `prod` to find out changed in production while we were busy modding `base` for Azure
 3. merge `prod` and `model`
 
-**The main advantage of using this method is that it can be re-run on a newer production set within minutes if the migration was delayed or rolled back.**
+**The main advantage of using this method is that it can be re-run on a newer production set within minutes if the Azure deployment was delayed or rolled back.**
 
 ![high level merge](intro-2.png)
 
 
 ## Project structure
-We used the following file structure for this project:
+All scripts provided in this guide rely on the following file structure:
 
 * `\` - root_solution_folder
   * `db` - contains folders with T-SQL code from *snapshot* DBs
@@ -66,10 +70,10 @@ We used the following file structure for this project:
   * `staging-diff` - diff files for comparing *base* and *model* versions
   * `customer-dbs` - modified code for customer DBs, based on a single *customer model DB*
 
-All SQL code was committed to Git repositories, one repo per shared DB and one repo for a sample customer DB (*c_4vallees*). The rest of customer DBs were supposed to be identical to the sample.
+All SQL code was committed to Git repositories, one repo per shared DB and one repo for a sample customer DB (*c_4vallees*). The rest of customer databases were supposed to be identical to the sample.
 
-## Step 1: *getting AZ compatibility mods*
-This script diffs the latest version of modified (*model*) DBs against their original (*base*) state and outputs a list of SQL objects changed for migration. We will need this list to limit our search for changes in production to those objects only. Any other production changes should be merged as-is.
+## Step 1: *identifying Azure compatibility modifications*
+This script diffs the latest version of modified (*model*) DBs against their original (*base*) state and outputs a list of SQL objects changed for migration. We will need this list to limit our search for changes in production to those objects only. Any other production changes will carry over to Azure as-is.
 
 This script should be run from the solution root because it expects database repositories to be in `./db/db_name` folders.
 
@@ -77,7 +81,7 @@ This script should be run from the solution root because it expects database rep
 * `$diffDBs` - an array with DB names, e.g. `$diffDBs = @("central", "helpdesk", "reporting")`
 * `$diffFolderName` - relative path to the output folder, e.g. `$diffFolderName = "staging-diff"`
 
-**Output**: a bunch of diff files per DB, e.g. `staging-diff/init-head-diff-db_name.txt`
+**Output**: a collection of diff files, one per DB, e.g. *staging-diff/init-head-diff-db_name.txt*
 
 
 ```powershell
@@ -122,13 +126,13 @@ foreach ($dbName in $diffDBs) {
 }
 ```
 
-Here is a sample of output from the script above. It's a list of all the file names (objects) affected by Azure modifications. The file names conform to SSMS object scripting format: *owner.object.type.sql*, one file per object.
+The contents of the output from the script above is a list of all the file names (objects) affected by Azure modifications, per DB. The file names conform to SSMS object scripting format: *owner.object.type.sql*, one file per object.
 
 ![sample diff output](sample-diff-output.png)
 
-## Step 2: *getting recent changes from PROD*
+## Step 2: *identifying recent changes in PROD*
 
-The previous step gave us a list file/object names to limit our search for recent changes in PROD to only what affects Azure modifications (stored procedures, user functions and views). We achieved that by comparing 2 commits. In this step we compare the code directly between *base* and *prod* DBs using *sys.syscomments* tables to avoid exporting all objects from production DBs. The comparison is done by an [open source CLI tool(AZPM)](https://github.com/rimutaka/onprem2az-elastic-query) we had to build for this project.
+In this step, we compare the code directly between *base* and *prod* DBs using *sys.syscomments* tables to avoid exporting all objects from production DBs. The comparison is done by an [open source CLI tool(AZPM)](https://github.com/rimutaka/onprem2az-elastic-query) we had to build for this project.
 
 This PowerShell script relies on the output from *Step 1* and should also be run from the solution root.
 
@@ -138,7 +142,7 @@ This PowerShell script relies on the output from *Step 1* and should also be run
 * `$azpm` - location of [AZ migration CLI tool](https://github.com/rimutaka/onprem2az-elastic-query), e.g. `$azpm = "C:\Temp\AzurePoolCrossDbGenerator.exe"`
 * `$modelCustomerDB` - name of the `model` customer DB. It is required only if you are processing customer DBs from a single `model`.
 
-**Output**: new branches with unstaged files in each DB repo
+**Output**: new Git repo branches with unstaged files
 
 ```powershell
 . (Join-Path $PSScriptRoot vars.ps1)
@@ -212,9 +216,9 @@ foreach ($dbName in $diffDBs) {
 
 #### Customer DBs vs Shared DBs
 
-The data in our system was partitioned into a single-DB per customer and several shared DBs for reporting, lists of values and taxonimies. All *shared DBs* were compared to their `base`. It is a 1:1 relationship and we can simply create a GIT branch for every comparison in every repo.
+The data in our system was partitioned into a single-DB per customer and several shared DBs for reporting, lists of values and taxonimies. All *shared DBs* were compared to their `base`. It was a 1:1 relationship. We could create a GIT branch for every comparison in every repo and leave the changes *staged* for review.
 
-*Customer DBs*, on the other hand, are all compared to the same sample DB called `4vallees`. To keep the Git repo clean we stash away the changes for every *customer DB* to *base* comparison before moving onto the next DB. Stashing away allows us to review the diffs before making a commit.
+*Customer DBs*, on the other hand, were all compared to the same sample DB called `4vallees_base`. To keep the Git repo clean we *stashed* the changes for every *customer DB* to *base* comparison before moving onto the next DB. *Stashing* allowed us to review the diffs before making a commit.
 
 For example, comparing customer DB *c_hdj3ud5* to *base* creates stash *c_hdj3ud5-202002211117:staging*.
 
@@ -226,15 +230,15 @@ The screenshot above shows 3 branches named *DB + timestamp* with corresponding 
 
 The purpose of this merge is to converge our `base` version with the latest PROD changes.
 
-The diff in the screenshot below tells us that *prod* had some columns added.
+For example, the diff in the screenshot below telled us that *prod* had some columns added.
 
 ![First Diff](git-1st-diff.png)
 
-After some "cherry-picking" we end up with this version of accepted differences:
+After some "cherry-picking" we ended up with this version of accepted differences:
 
 ![Second diff](git-staged-diff.png)
 
-The merged tree has 2 branches: `master` for the *model DB* and another one for *PROD*,
+The merged tree had 2 branches: `master` for the *model DB* and another one for *PROD*,
 
 ![Tree before merge](git-tree-before-merge.png)
 
@@ -242,7 +246,7 @@ followed by a merge with all Azure compatibility changes from `master`.
 
 ![Fully merged with AZ](git-tree-merged-1-branch.png)
 
-This diff confirms that our AZ compatibility changes are all in there: cross-DB queries were correctly merged with Azure modifications and the new column names from *PROD*.
+This diff confirmed that our AZ compatibility changes were present: cross-DB queries were correctly merged with Azure modifications and the new column names from *PROD*.
 
 ![AZ changes diff](git-tree-merge-staged-changes.png)
 
@@ -252,7 +256,7 @@ We repeated the merge for the other customer DBs from stashes and kept all custo
 
 ## Applying merged changes back to PROD DBs
 
-The following script applies the merged code to all shared and customer `model` DBs. This version of the script assumes that all SQL code modified for Azure is identical between all customer DBs and can be applied with *search and replace* for the DB name.
+The following script generates SQL files with the merged code for all shared and customer DBs. The scripts can then be applied to PROD databases. 
 
 Run the script from the solution root.
 
@@ -260,6 +264,7 @@ Run the script from the solution root.
 * `$dbCustomers` - an array with DB names, e.g. `$dbCustomers = @("c_8hdke93", "c_a83hdk2", "c_hdj3ud5")`
 * `$modelCustomerDB` - name of the *model* customer DB, e.g. `$modelCustomerDB = "4vallees"`
 * Copy the diff for customer *model* DB to `customer_dbs\diff.txt` and make changes to the list inside, if needed
+* This version of the script assumes that the SQL code modified for Azure is identical between all customer DBs. There may still be differences in other parts of customer databases, but what changed for Azure is identical.
 
 **Output**: scripts for all modified objects are saved in `.\customer_dbs\db_name` folders.
 
@@ -328,7 +333,7 @@ Running the above script for our 3 customer DBs produced ~ 600 SQL files.
 
 ![customer DB scripts](customer-db-scripts.png)
 
-The following script applies output from the previous step to DBs. Run it from the solution root.
+The following script applies the files generated in the previous step to production databases. Run it from the solution root.
 
 **Required input vars**:
 * `$dbCustomers` - an array with DB names, e.g. `$dbCustomers = @("c_8hdke93", "c_a83hdk2", "c_hdj3ud5")`
@@ -408,7 +413,7 @@ Successfully exported files can be imported into Azure SQL Pool with this PowerS
 * `$AzUserName` - AZ SQL server admin user name, e.g. `$AzUserName = "sa"`
 * `$AzResourceGroup`, `$AzServerName`, `$AzPoolName` - Azure SQL server params.
 
-**Output**: *.bacpac* files imported into AZ SQL.
+**Output**: list of *.bacpac* files names imported into AZ SQL.
 
 ```powershell
 . (Join-Path $PSScriptRoot vars.ps1)
@@ -447,10 +452,10 @@ foreach ($db in $dbs) {
 
 ## Congratulations - you are done
 
-The DBs have been imported into AZ SQL pool. It's time to start testing.
+All databases should have been imported into AZ SQL pool by the above script and into an Azure Elastic Pool. You can connect to them from your applications to start testing.
 
 ----
 
 *This post is based on my recent experience migrating a real estate management system with hundreds of MS SQL databases from on-prem to Azure SQL. Read my other articles for more learnings from that project.*
 
-*I realise that this article makes little sense outside the narrow context of migrating a large number of MS SQL DBs to Azure and is hard to comprehend. It took me quite some time to figure out the right merge process, so I decided that it's better to share what I learned even in its current form. It may still save someone a lot of time and effort.* 
+*I realise that this article makes little sense outside the narrow context of migrating a large number of MS SQL DBs to Azure and is hard to comprehend. It took me quite some time to figure out the right merge process, so I decided that it's better to share what I learned even in its current form. It may still save someone a lot of time and effort.*
