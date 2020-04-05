@@ -3,7 +3,7 @@
 
 *It can take a long time to prepare a system for migration to a cloud environment. There is a chance that the production codebase has changed during that time. This post offers a simple solution for identifying and merging such changes. The post is very specific to Azure migration and is unlikely to be of interest in any other context.*
 
-Our cloud migration project took 3 months from taking a snapshot of all production databases to making the code fully compatible with Azure SQL. In the meantime, the SQL code in production changed to keep up with customer requests and bug fixes. We decided to ignore the changes until the very end of migration to compare and merge the entire codebase in a single sweep. That decision was based on the [universal precaution principle](https://en.wikipedia.org/wiki/Universal_precautions) because there could also be any number of untracked changes we didn't know about and could miss if we relied on tracking the changes in PROD.
+Our cloud migration project took 3 months from taking a snapshot of all production databases to making the code fully compatible with Azure SQL. In the meantime, the SQL code in production changed to keep up with customer requests and bug fixes. We decided to ignore the changes until the very end of migration to compare and merge the entire codebase in a single sweep. That decision was based on the [universal precaution principle](https://en.wikipedia.org/wiki/Universal_precautions) because there could also be any number of untracked changes we didn't know about and could miss if we relied on tracking the changes in production.
 
 This diagram illustrates the relationship between DB codebase and the Git repository as a timeline. 
 
