@@ -1,19 +1,19 @@
-# Visualising differences and similarities in multiple database schemas
-#### A primer with code examples for cloud and micro-services migration
+# Visualizing differences in T-SQL code between multiple databases
+#### A quick guide with code examples for comparing codebase between a large number of similar databases
 
-> We inherited this server with 1,190 MSSQL databases after a small acquisition a few years ago. The database names are not very descriptive and we don't really know how it all works. We'd like to migrate them all to the cloud.
+*This post describes a simple T-SQL solution for comparing multiple databases each-to-each, combinatorial style and visualizing the results in MS Excel. It comes very useful in projects where the codebase has to be cleaned up or unified for refactoring or a major upgrade.*
 
-I faced a similar problem on another project with multiple customer DBs sharing the same codebase and schema in theory, but not in practice. Most tools like [RedGate](https://www.red-gate.com/products/sql-development/sql-compare/) or [Apex](https://www.apexsql.com/sql-tools-diff.aspx) are good at comparing one DB to another. We wanted to compare all databases to each other and visualise the results.
+**Disclaimer**: we could probably achieve the same result with DBA tools like [RedGate](https://www.red-gate.com/products/sql-development/sql-compare/) or [Apex](https://www.apexsql.com/sql-tools-diff.aspx), but could not justify the expense and the risk of it not working out.
 
 #### Task at hand
 1. Identify groups of similar DBs 
-2. Calculate their similarity and divergence
+2. Calculate their similarity score
 3. Display the results as a diagram
 
 #### Solution overview
-A database schema is comprised of "objects" like user tables, views, stored procedures or functions. They are all listed in `sys.objects` table and their source code or definitions are stored in `sys.syscomments`. We could use data from those two tables to compare one DB to another:
+A database schema is comprised of "objects" like user tables, views, stored procedures or functions. They are all listed in `sys.objects` table and their source code or definitions are stored in `sys.syscomments`. We can use data from those two tables to compare one DB to another.
 
-## Collecting DB object data
+## Step 1: *collecting database object data*
 
 We'll need 2 tables: one to hold the list of objects and another to hold the numbers on how those objects are distributed across all the DBs.
 
@@ -46,9 +46,9 @@ where type_desc in (''VIEW'', ''SQL_TABLE_VALUED_FUNCTION'', ''SQL_STORED_PROCED
 and DB_NAME() not in (''model'', ''tempdb'', ''msdb'')
 group by obj.name, obj.type_desc'
 ```
-The above code retrieves a list of objects of certain types from `sys.objects` table and their source T-SQL code from  `sys.syscomments` table. Some system DBs are excluded. `master` DB is included because it is quite common to create objects in it by mistake.
+The above code retrieves a list of objects of certain types from `sys.objects` table and their source T-SQL code from  `sys.syscomments` table. Some system DBs are excluded. `master` DB is included because it is quite common to create objects in it from [SSMS](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms) by mistake.
 
-We used two different metrics to calculate the similarity score: object names and object T-SQL code match. The metrics are permanently stored in `tDbSimilarityScore` table. 
+We can use two different metrics to calculate the similarity score: *object names* match and *T-SQL code* match. The metrics are permanently stored in `tDbSimilarityScore` table. 
 
 ```sql
 drop table if exists tDbSimilarityScore
@@ -88,9 +88,9 @@ where exists (select 1 from tDbSimilarityScore tss2 where tss2.db1 = tss.db2 and
 ```
 It is an optional step. **Do not remove the duplication yet** - we will need the full *N x N* matrix for a pivot table later.
 
-## Calculating similarity score
+## Step 2: *calculating similarity score*
 
-The rest of the fields in `tDbSimilarityScore` are populated with update statements. It is a simpler and faster way than a single INSERT statement. The number of records involved is small enough not to worry about the performance.
+The rest of the fields in `tDbSimilarityScore` are populated with a sequence of UPDATE statements. It is a simpler and faster way than a single INSERT statement. The number of records involved is small enough not to worry about the performance.
 
 1. Update the total number of objects for *DB1* and *DB2*:
 
@@ -146,7 +146,7 @@ update tDbSimilarityScore set ScoreHash = convert(decimal(13,3), (isnull(convert
 update tDbSimilarityScore set ScoreHashSquared =power(convert(decimal(13,3), isnull(convert(float, HashSame)/ nullif(Same,0),0)), 2)
 ```
 
-## Sample results
+### Sample results
 
 In this example we compared the main reporting database with other reporting and shared DBs. 
 
@@ -158,7 +158,7 @@ select * from tDbSimilarityScore where db1 = 'reporting' order by db1, score des
 
 The correlation between all *REPORTING_...* DBs was quite high, but so was their code divergence. For example REPORTING and REPORTING_ROx have 19 objects with the same names, but different TSQL code. The other *REPORTING_...* DBs share approximately 1/2 of their object names with *REPORTING*, but 20% of them have differences in the source code. Some of the differences are there by design, but after a closer inspection we concluded that most of them can be merged onto a single code base.
 
-## Similarity matrix
+## Step 3: *displaying similarity matrix*
 The similarity and divergence between DBs can be visualised in an MS Excel matrix. This example uses a pivot table with conditional formatting. It takes only a couple of minutes to make.
 
 ![matrix of all dbs](cust-dbs-matrix-zoom.png)
@@ -189,4 +189,5 @@ In the following example we compared shared databases using different metrics:
 These simple colour graphs are only really useful for a quick visual overview. They helped us grasp the extent of the problem and highlighted areas of interest for further investigation. The rest of the work was done by trawling through the source code, not without help of more scripts. For example, much of the code divergence was due to differences in white space, casing and line endings. So something as simple as [normalising all T-SQL code](https://stackoverflow.com/questions/1580017/how-to-replace-multiple-characters-in-sql#answer-1580062) with `LOWER(REPLACE(REPLACE(REPLACE(com.text,' ',''),CHAR(10),''),CHAR(13),''))` before calculating the similarity score may save you hours down the track.
 
 ----
-*I regret not using this approach earlier in our cloud migration project. We wasted too much time reviewing and fixing very similar code when it could be all converged to the same code base first. I hope this post will save you from making the same mistake.*
+
+*This post is based on my recent experience migrating a real estate management system with hundreds of MS SQL databases from on-prem to Azure SQL. Read my other articles for more learnings from that project.*
