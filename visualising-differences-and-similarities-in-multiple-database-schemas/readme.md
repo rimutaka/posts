@@ -1,14 +1,14 @@
 # Visualizing differences in T-SQL code between multiple databases
-#### A quick guide with code examples for comparing codebase between a large number of similar databases
+#### A quick guide with code examples for comparing codebase between large number of similar databases
 
 *This post describes a simple T-SQL solution for comparing multiple databases each-to-each, combinatorial style and visualizing the results in MS Excel. It comes very useful in projects where the codebase has to be cleaned up or unified for refactoring or a major upgrade.*
-
-**Disclaimer**: we could probably achieve the same result with DBA tools like [RedGate](https://www.red-gate.com/products/sql-development/sql-compare/) or [Apex](https://www.apexsql.com/sql-tools-diff.aspx), but could not justify the expense and the risk of it not working out.
 
 #### Task at hand
 1. Identify groups of similar DBs 
 2. Calculate their similarity score
 3. Display the results as a diagram
+
+**Disclaimer**: we could probably achieve the same result with DBA tools like [RedGate](https://www.red-gate.com/products/sql-development/sql-compare/) or [Apex](https://www.apexsql.com/sql-tools-diff.aspx), but could not justify the expense and the risk of it not working out.
 
 #### Solution overview
 A database schema is comprised of "objects" like user tables, views, stored procedures or functions. They are all listed in `sys.objects` table and their source code or definitions are stored in `sys.syscomments`. We can use data from those two tables to compare one DB to another.
