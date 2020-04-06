@@ -7,7 +7,7 @@ Picture getting hundreds of search results for *C#* jobs on a freelance website.
 
 You scroll through, but nothing appeals. You click on *Full stack* category and half of the results are a repeat of the *C#* search you just went through because they were listed in both categories. Frustrating, isn't it?
 
-The choice of options for us, end users is limited:
+The choice of options for us, end-users is limited:
 
 1. Use some other website
 2. Ask them to improve the search
