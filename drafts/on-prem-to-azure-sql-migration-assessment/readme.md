@@ -54,8 +54,8 @@ The main objective of the project was to migrate the system to the cloud because
 
 #### Report objectives
 
-* identify suitable DB technology on Azure
-* assess cost and feasibility
+* Identify suitable DB technology on Azure
+* Assess cost and feasibility
 
 #### Assessment methodology
 
@@ -311,7 +311,7 @@ The pricing below is "per month" in West Europe availability zone. The server si
 |                     |                     | $5,551 (1 E32 v3 (32 vCPU(s), 256 GB RAM) + SQL Std + extra storage) |
 
 ### PostgreSQL
-PgSQL is comparable in scale and performance to MS SQL. Its main advantage is lower running cost because it is a free open source product. PgSQL lower running cost is the only reason to consider it for this project. Azure offers managed PostgreSQL at the price of compute + storage, which is approximately ½ of MS SQL cost.
+PgSQL is comparable in scale and performance to MS SQL. Its main advantage is its lower running cost because it is a free open source product. PgSQL lower running cost is the only reason to consider it for this project. Azure offers managed PostgreSQL at the price of "compute + storage", which is approximately ½ of MS SQL cost.
 
 The server sizing in the table below is very approximate and was included to illustrate the price range.
 
@@ -336,7 +336,7 @@ The in-house team would have to upskill during the migration. Most MS SQL develo
 
 ## Conclusion
 
-**The only viable migration option that meets our time and budget constraints is Azure SQL**. It is the closest in terms of  technology and requires the least change compared to all the other options. Azure SQL has three different types of MS SQL products.
+**The only viable migration option that meets our time and budget constraints is Azure SQL**. It is the closest in terms of  technology and requires the least change compared to all the other options. Azure SQL has three different types of MS SQL products:
 
 * **Azure SQL Pool** - most optimal and cost-effective
 * **Azure VM + MS SQL** - the quickest and least risky
