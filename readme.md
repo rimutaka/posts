@@ -15,6 +15,14 @@
 > A practical guide for large-scale "on-prem" to Azure SQL migration projects
 
 
+## [Migration of Cross-DB Queries and Linked Servers from on-prem MS SQL to Azure ElasticQuery](azure-sql-migration-series/migration-of-cross-db-queries-and-linked-servers-from-on-prem-ms-sql-to-azure-elasticquery/)
+> A practical guide for migrating SELECT, INSERT, UPDATE, DELETE and EXEC statements to ElasticQuery at scale
+
+
+## [On-prem to Azure SQL migration assessment report](azure-sql-migration-series/on-prem-to-azure-sql-migration-assessment/)
+> A report from a real-life migration project involving multiple MS SQL databases
+
+
 ## [Visualizing differences in T-SQL code between multiple databases](azure-sql-migration-series/visualising-differences-and-similarities-in-multiple-database-schemas/)
 > A quick guide with code examples for comparing codebase between large number of similar databases
 
@@ -25,14 +33,6 @@
 
 ## [Identifying code differences in multiple MS SQL databases](drafts/comparing-multiple-customer-dbs-for-cloud-migration/)
 > A detailed guide to comparing and normalizing MS SQL codebase for cloud migration
-
-
-## [Migration of Cross-DB Queries and Linked Servers from on-prem MS SQL to Azure ElasticQuery](drafts/migration-of-cross-db-queries-and-linked-servers-from-on-prem-ms-sql-to-azure-elasticquery/)
-> A practical guide for migrating SELECT, INSERT, UPDATE, DELETE and EXEC statements to ElasticQuery at scale
-
-
-## [On-prem to Azure SQL migration assessment](drafts/on-prem-to-azure-sql-migration-assessment/)
-> This post is a reducted copy from a real-life project involving 184 MS SQL databases
 
 
 ## [How I fixed UpWork.com with 100 lines of code](how-to-fix-web-annoyances-you-cant-do-without/)
