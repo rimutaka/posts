@@ -21,14 +21,14 @@ And power-users are a noisy bunch. They are you hear from most. Here is another 
 
 It is so true! We made that very mistake in one of my previous startups, [mVentory](http://mventory.com). We spent too much time and money satisfying every demand of our early adopters to the point where we lost the product-market fit for everyone else. File it under *#FAIL*. 
 
-Reid Hoffman and his guests on [Masters of Scale podcast](https://mastersofscale.com/) tell multiple stories about [community building](https://mastersofscale.com/caterina-fake-build-a-more-human-internet/) and "[burning fires](https://open.spotify.com/episode/4u0S0P2gL70g6CcbeiZzM7)" with one simple message — ignore your power-users, ignore the most vocal ones and do what's right for the business.
+Reid Hoffman and his guests on [Masters of Scale podcast](https://mastersofscale.com/) tell multiple stories about [community building](https://mastersofscale.com/caterina-fake-build-a-more-human-internet/) and "[letting fires burn](https://open.spotify.com/episode/4u0S0P2gL70g6CcbeiZzM7)" with one simple message — ignore your power-users, ignore the most vocal ones and do what's right for the business.
 
 ![Ried Hoffman tweet](ried-hoffman-tweet.png)
 
 
-What happened to [TaskRabbit](https://www.taskrabbit.com/) was another striking example of ignoring power-users. TaskRabbit already had a sizable customer base at the time of a risky pivot to a much simpler bidding model. This is how Leah Busque from Fuel Capital [described the fallout](https://www.saastr.com/saastr-podcasts-for-the-week-with-zylo-and-taskrabbit-july-26-2019/) right after the change:
+But no one said it better than Leah Busque from [TaskRabbit](https://www.taskrabbit.com/) when she [described the fallout](https://www.saastr.com/saastr-podcasts-for-the-week-with-zylo-and-taskrabbit-july-26-2019/) right after a pivot to a much simpler bidding model:
 
-> ... the NPS (Net Promoter Score) went from 60s-70s to negative. Everyone was really upset about the new product and the new changes. Oddly enough, the new customers and new taskers had twice as much usage and higher NPS than the old cohort and when we dug deep into the data we realized **maybe those vocal customers that loved the old platform were the wrong customers, they were not the ones that were going to take us into the future**.
+> ... the NPS (Net Promoter Score) went from 60s-70s to negative. Everyone was really upset about the new product and the new changes. Oddly enough, the new customers and taskers had twice as much usage and higher NPS than the old cohort and when we dug deep into the data we realized **maybe those vocal customers that loved the old platform were the wrong customers, they were not the ones that were going to take us into the future**.
 
 ### So, am I not the right customer for Spotify? 
 Am I about to be fired?
@@ -37,9 +37,9 @@ Am I about to be fired?
 
 > Well, sorry, that can't be done. You have too many tracks, Mr. Poweruser. Have you tried using a [3rd party app](https://play.google.com/store/search?q=spotify&c=apps&hl=en) or [our API](https://developer.spotify.com/)?
 
-### Spotify, like many others, solved the problem of power-user demands by [becoming a platform](https://mastersofscale.com/tobi-lutke-be-a-platform/) with a rich set of APIs.
+### Spotify, [like many others](https://mastersofscale.com/tobi-lutke-be-a-platform/), solved the problem of power-user demands by becoming a platform with a rich set of APIs and 3rd party apps.
 
-I figured that going down the API route was a bit too much for my little "shuffle" problem and [built a browser add-on](https://github.com/rimutaka/spotify-play-all-saved-albums) to make me a playlist exactly the way I want with a single click. 
+I had no choice, but to channel my frustration into making a [browser add-on to combine all my albums into a single playlist](https://github.com/rimutaka/spotify-play-all-saved-albums) with one click.
 
 Me and my music got reunited and I still love Spotify even if they don't love me as much in return.
 
