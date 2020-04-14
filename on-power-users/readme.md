@@ -28,7 +28,7 @@ Reid Hoffman and his guests on [Masters of Scale podcast](https://mastersofscale
 
 But no one said it better than Leah Busque, founder of [TaskRabbit](https://www.taskrabbit.com/) when she [described the fallout](https://www.saastr.com/saastr-podcasts-for-the-week-with-zylo-and-taskrabbit-july-26-2019/) after a change to a much simpler bidding model:
 
-> ... the NPS (Net Promoter Score) went from 60s-70s to negative. Everyone was really upset about the new product and the new changes. Oddly enough, the new customers and taskers had twice as much usage and higher NPS than the old cohort and when we dug deep into the data we realized **maybe those vocal customers that loved the old platform were the wrong customers, they were not the ones that were going to take us into the future**.
+> ... the NPS (Net Promoter Score) went from 60s-70s to negative. Everyone was really upset about the new product and the new changes. Oddly enough, the new customers and the new taskers had twice as much usage and higher NPS than the old cohort and when we dug deep into the data we realized **maybe those vocal customers that loved the old platform were the wrong customers, they were not the ones that were going to take us into the future**.
 
 ### So, am I not the right customer for Spotify? 
 Am I about to be fired?
