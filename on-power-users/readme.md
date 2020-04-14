@@ -39,9 +39,10 @@ Am I about to be fired?
 
 ### Spotify, [like many others](https://mastersofscale.com/tobi-lutke-be-a-platform/), solved the problem of power-user demands by becoming a platform with a rich set of APIs and 3rd party apps.
 
-I had no choice, but to channel my frustration into making a [browser add-on to combine all my albums into a single playlist](https://github.com/rimutaka/spotify-play-all-saved-albums) with one click.
-
-Me and my music got reunited and I still love Spotify even if they don't love me as much in return.
+I had no choice, but to channel my frustration into making a [browser add-on to combine all my albums into a single playlist](https://github.com/rimutaka/spotify-play-all-saved-albums) with one click. Problem solved.
 
 ![spotify play all albums addon](addon.png)
 
+---
+
+P.S.  *I still love Spotify even if they don't love me as much in return.*
