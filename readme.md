@@ -39,3 +39,7 @@
 > A short story of learning a new skill everyone should have anyway
 
 
+## [Are you a power-user? You are not wanted any more.](on-power-users/)
+> How to focus on a bigger market and not leave your early adopters behind
+
+
