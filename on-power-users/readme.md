@@ -35,8 +35,9 @@ Am I about to be fired?
 
 > All I want is to play the entire collection of 12,796 tracks from my 852 albums on "shuffle".
 
-> Well, sorry, that can't be done. You have too many tracks, Mr. Poweruser. Have you tried using our API?
+> Well, sorry, that can't be done. You have too many tracks, Mr. Poweruser. Have you tried using a [3rd party app](https://play.google.com/store/search?q=spotify&c=apps&hl=en) or [our API](https://developer.spotify.com/)?
 
+### Spotify, like many others, solved the problem of power-user demands by [becoming a platform](https://mastersofscale.com/tobi-lutke-be-a-platform/) with a rich set of APIs.
 
 I figured that going down the API route was a bit too much for my little "shuffle" problem and [built a browser add-on](https://github.com/rimutaka/spotify-play-all-saved-albums) to make me a playlist exactly the way I want with a single click. 
 
