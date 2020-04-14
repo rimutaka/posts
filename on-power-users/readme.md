@@ -15,7 +15,7 @@ Sarah Travel from Benchmark Capital explained that view so well in an [interview
 
 ![power users vs opportunity graph](usage-graph.png)
 
-And power-users are a noisy bunch. They are you hear from most. Here is another quote from Sarah Travel:
+And power-users are a noisy bunch. They are who you hear from most. Here is another quote from Sarah Travel:
 
 > ... because your power-users are your most vocal group and **may you be so lucky to have these people as your early adopters, they are your biggest believers, the evangelists**, but because they love your product so much they are always making requests to your team about new things to build, new features, that only they would use themselves.
 
