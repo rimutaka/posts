@@ -74,13 +74,11 @@ CloudFront links directly to [CloudWatch alarms](https://docs.aws.amazon.com/Ama
 
 ![referrer report](referrer.png)
 
-The only charts with visitor information are Devices, Browsers, Operating Systems and Locations. They are very superficial - you cannot drill down into the data. What you see in the screenshots here is how granular it gets.
+The only four charts with visitor information are Devices, Browsers, Operating Systems and Locations. They are very superficial - you cannot drill down into the data. What you see in the screenshots here is how granular it gets.
 
 ![devices](devices.png)
 
 ![browsers](browsers.png)
-
-![operating systems](os.png)
 
 ![operating systems](os.png)
 
@@ -89,20 +87,20 @@ The only charts with visitor information are Devices, Browsers, Operating System
 
 ## Google Analytics dashboard
 
-I'd guess that most readers here are familiar with Google Analytics, so I will only remind you what that dashboard looks like with a single screenshot.
+I'd guess that most readers here are familiar with Google Analytics (GA), so I will only remind you what that dashboard looks like with a single screenshot.
 
 ![google analytics homepage](ga.png)
 
 * The depth of detail in GA is many times better than what we get from CloudFront charts and reports. 
 * GA has many more metrics and insights than CloudFront.
 
-These menus list just a subset of all the GA views:
+These GA menus list only a subset of all the GA views, compared to 4 views in CloudFront:
 
 ![google analytics menus](ga-menus.png)
 
 
 ## Conclusion
 
-CloudFront metrics are a poor replacement choice for Google Analytics. I will be adding a GA tracker to my [Feedback Farm](https://feedback.farm) experiment as soon as publish this post.
+CloudFront metrics are a poor replacement choice for Google Analytics. It was a mistake to omit the client-side tracker and I will be adding GA to my [Feedback Farm](https://feedback.farm) experiment shortly.
 
-I would still recommend enabling CloudFront metrics alongside a client-based JS tracker, of which there is now [quite a choice](https://github.com/onurakpolat/awesome-analytics).
+I would still recommend enabling CloudFront metrics alongside a JS tracker, of which there is now [quite a choice](https://github.com/onurakpolat/awesome-analytics).
