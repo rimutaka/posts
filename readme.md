@@ -27,6 +27,10 @@
 > A quick guide with code examples for comparing codebase between large number of similar databases
 
 
+## [CloudFront Metrics vs. Google Analytics](cloudfront-analytics/)
+> Do we still need Google Analytics for websites hosted on AWS S3?
+
+
 ## [How to switch to working remotely: COVID-19 edition](covidpocalypse/)
 > A practical guide for corporate managers facing the risk of business disruption due to staff absences
 
@@ -39,7 +43,7 @@
 > A short story of learning a new skill everyone should have anyway
 
 
-## [Are you a power-user? You are not wanted any more.](on-power-users/)
+## [You're a power-user? You are not wanted any more.](on-power-users/)
 > How to focus on a bigger market and not leave your early adopters behind
 
 

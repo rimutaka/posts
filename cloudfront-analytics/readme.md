@@ -1,13 +1,13 @@
 # CloudFront Metrics vs. Google Analytics
-#### Do you need Google Analytics for an AWS S3 hosted website?
+#### Do we still need Google Analytics for websites hosted on AWS S3?
 
-I had to build a landing page to validate a [free proofreading community](https://feedback.farm) idea a few days ago. It was just a single page with 2 images and the easiest hosting option was [AWS S3 + CloudFront + Route53](https://dev.to/jillesvangurp/using-cloudfront-s3-and-route-53-for-hosting-395o). I decided not to add the obligatory Google Analytics script and rely on the analytics provided by CloudFront. 
+I had to build a landing page to validate a [free proofreading community](https://feedback.farm) idea a few days ago. It was just a single page with 2 images and an email sign up form. The easiest hosting option was [AWS S3 + CloudFront + Route53](https://dev.to/jillesvangurp/using-cloudfront-s3-and-route-53-for-hosting-395o). I decided not to add the obligatory Google Analytics JS tracker and rely on the analytics provided by CloudFront. 
 
-Here is what I found ...
+Here is what I found a few days later when the data started coming in ...
 
 ## CloudFront Logging
 
-The logs are written into a separate S3 bucket in [W3C format](https://www.w3.org/TR/WD-logfile.html). There are standard W3C fields like `date` `time` `sc-bytes` `c-ip` and `cs(Referer)` as well as AWS specific fields like `x-edge-location` or `x-edge-result-type`.
+The logs were written into a separate S3 bucket in [W3C format](https://www.w3.org/TR/WD-logfile.html). There were standard W3C fields like `date`, `time`, `sc-bytes`, `c-ip` and `cs(Referer)` as well as AWS specific fields like `x-edge-location` or `x-edge-result-type`. For example, the 3rd column is an extended field with the name of the AWS edge location the content was served from. It's kind of cool, but it doesn't tell us much about our visitors.
 
 ```
 #Version: 1.0
@@ -28,7 +28,9 @@ The logs are written into a separate S3 bucket in [W3C format](https://www.w3.or
 
 ## CloudFront Reports
 
-Log-based reports go into more technical details ([caching](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-statistics.html) and [usage](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/usage-charts.html)) of how a resource was served, if it was in the cache, bytes transferred and other info of interest to a sysadmin. It is good for fine-tuning the setup, but is of limited use if you want to understand your users. The graphs are update every hour or so, but there may be delays up to 24hrs.
+Log-based reports go into more technical details ([caching](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-statistics.html) and [usage](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/usage-charts.html)) of how a resource was served, if it was in the cache, bytes transferred and other info of interest to sysadmins. 
+
+AWS updates the graphs every hour or so, but they warn there may be delays up to 24hrs.
 
 #### Caching graphs
 
@@ -44,7 +46,7 @@ Log-based reports go into more technical details ([caching](https://docs.aws.ama
 
 #### Usage graphs
 
-Usage reports look very similar to caching reports, but have a different level of detail. They are good for matching them with AWS billing to optimize the monthly cost.
+Usage reports look very similar to caching reports, but have a different level of detail. They are good for matching the usage data with AWS billing to optimize the monthly cost.
 
 ![usage](usage.png)
 
@@ -56,7 +58,7 @@ Did you notice **HTTP Status Codes graph** had a surprisingly high number of 404
 
 ## Real-time monitoring
 
-[CloudFront connects to CloudWatch](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html) to display real-time performance, which is useful for troubleshooting, but tells us little about our visitors.
+[CloudFront connects to CloudWatch](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html) to display real-time performance of the distribution (i.e. the website), which is useful for troubleshooting, but still tells us little about our visitors.
 
 ![real time monitoring](real-time-monitoring.png)
 
@@ -66,13 +68,13 @@ CloudFront links directly to [CloudWatch alarms](https://docs.aws.amazon.com/Ama
 
 ![cloudwatch alarm](alarm.png)
 
-## Something about the viewers
+## Viewer metrics
 
-**Top Referrers report** shows where the viewers came from, but you can't drill any further into that data. For example, I would like to know what pages they came from, not just from what domain.
+[**Top Referrers report**](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/top-referrers-report.html) shows where the viewers came from, but you can't drill any further into that data. For example, I would like to know what pages they came from, not just from what domain.
 
 ![referrer report](referrer.png)
 
-The only charts with visitor information are Devices, Browsers, Operating Systems and Locations. They are very superficial - you cannot drill down into the data. What you see in the screenshots below is how granular it gets.
+The only charts with visitor information are Devices, Browsers, Operating Systems and Locations. They are very superficial - you cannot drill down into the data. What you see in the screenshots here is how granular it gets.
 
 ![devices](devices.png)
 
@@ -87,17 +89,20 @@ The only charts with visitor information are Devices, Browsers, Operating System
 
 ## Google Analytics dashboard
 
-You probably know Google Analytics well, so I will only remind you what their dashboard and a set of menus look like to compare with the AWS CloudFront dashboard.
+I'd guess that most readers here are familiar with Google Analytics, so I will only remind you what that dashboard looks like with a single screenshot.
 
-![google ananlytics homepage](ga.png)
+![google analytics homepage](ga.png)
 
-![google ananlytics menus](ga-menus.png)
+* The depth of detail in GA is many times better than what we get from CloudFront Metrics. 
+* GA has many more metrics and insights than CloudFront.
+
+These menus are just some of the GA views:
+
+![google analytics menus](ga-menus.png)
 
 
 ## Conclusion
 
-CloudFront is a poor replacement choice for Google Analytics. Both of those services can be used together to get more information about your website visitors and server-side performance.
+CloudFront Metrics is a poor replacement choice for Google Analytics. I added a GA tracker to my [Feedback Farm](https://feedback.farm) experiment after seeing CloudFront reports. 
 
-
-
-
+I would still recommend enabling CloudFront metrics alongside a client-based JS tracker, of which there is now [quite a choice](https://github.com/onurakpolat/awesome-analytics).
