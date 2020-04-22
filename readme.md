@@ -27,8 +27,8 @@
 > A quick guide with code examples for comparing codebase between large number of similar databases
 
 
-## [CloudFront Metrics vs. Google Analytics](cloudfront-analytics/)
-> Do we still need Google Analytics for websites hosted on AWS S3?
+## [Using CloudFront metrics instead of Google Analytics](cloudfront-analytics/)
+> A detailed look at AWS website monitoring tools built into AWS CloudFront
 
 
 ## [How to switch to working remotely: COVID-19 edition](covidpocalypse/)
