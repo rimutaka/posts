@@ -1,4 +1,4 @@
-# Using CloudFront metrics instead of Google Analytics
+# Replacing Google Analytics with CloudFront metrics
 #### A detailed look at AWS website monitoring tools built into AWS CloudFront
 
 I had to build a landing page to validate a [free proofreading community](https://feedback.farm) idea a few days ago. It was just a single page with 2 images and an email sign up form. The easiest hosting option was [AWS S3 + CloudFront + Route53](https://dev.to/jillesvangurp/using-cloudfront-s3-and-route-53-for-hosting-395o). I decided not to add the obligatory Google Analytics JS tracker and rely on the analytics provided by CloudFront. 
@@ -74,7 +74,7 @@ CloudFront links directly to [CloudWatch alarms](https://docs.aws.amazon.com/Ama
 
 ![referrer report](referrer.png)
 
-The only four charts with visitor information are Devices, Browsers, Operating Systems and Locations. They are very superficial - you cannot drill down into the data. What you see in the screenshots here is how granular it gets.
+There are only four charts with visitor information: *Devices*, *Browsers*, *Operating Systems* and *Locations*. They are very superficial - you cannot drill down into the data. What you see in the screenshots here is how granular it gets.
 
 ![devices](devices.png)
 
@@ -103,4 +103,4 @@ These GA menus list only a subset of all the GA views, compared to 4 views in Cl
 
 CloudFront metrics are a poor replacement choice for Google Analytics. It was a mistake to omit the client-side tracker and I will be adding GA to my [Feedback Farm](https://feedback.farm) experiment shortly.
 
-I would still recommend enabling CloudFront metrics alongside a JS tracker, of which there is now [quite a choice](https://github.com/onurakpolat/awesome-analytics).
+Saying that, I would still recommend enabling CloudFront metrics alongside a JS tracker, of which there is now [quite a choice](https://github.com/onurakpolat/awesome-analytics).

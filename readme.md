@@ -27,7 +27,7 @@
 > A quick guide with code examples for comparing codebase between large number of similar databases
 
 
-## [Using CloudFront metrics instead of Google Analytics](cloudfront-analytics/)
+## [Replacing Google Analytics with CloudFront metrics](cloudfront-analytics/)
 > A detailed look at AWS website monitoring tools built into AWS CloudFront
 
 
