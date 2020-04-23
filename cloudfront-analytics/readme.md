@@ -3,7 +3,12 @@
 
 I had to build a landing page to validate a [free proofreading community](https://feedback.farm) idea a few days ago. It was just a single page with 2 images and an email sign up form. The easiest hosting option was [AWS S3 + CloudFront + Route53](https://dev.to/jillesvangurp/using-cloudfront-s3-and-route-53-for-hosting-395o). I decided not to add the obligatory Google Analytics JS tracker and rely on the analytics provided by CloudFront. 
 
-Here is what I found a few days later when the data started coming in ...
+The site was running for a few days and attracted a small number of visitors, mainly bots. That was enough to conclude that:
+
+1. CloudFront metrics is not a replacement for a client-side tracker
+2. CloudFront metrics are useful in their own right to improve performance, troubleshoot or reduce your AWS bill.
+
+Read on to dive deeper into live examples of CloudFront logs and reports.
 
 ## CloudFront Logging
 
@@ -52,7 +57,7 @@ Usage reports look very similar to caching reports, but have a different level o
 
 Did you notice **HTTP Status Codes graph** had a surprisingly high number of 404 errors for such a small website?
 
-**Popular Objects** report contained the answer: missing `robots.txt` and bots trying to hack the non-existent WordPress.
+**Popular Objects** report contained the answer: a missing `robots.txt` file and bots trying to hack the non-existent WordPress.
 
 ![Popular Objects](popular-objects.png)
 
@@ -74,7 +79,7 @@ CloudFront links directly to [CloudWatch alarms](https://docs.aws.amazon.com/Ama
 
 ![referrer report](referrer.png)
 
-There are only four charts with visitor information: *Devices*, *Browsers*, *Operating Systems* and *Locations*. They are very superficial - you cannot drill down into the data. What you see in the screenshots here is how granular it gets.
+There are only four charts with visitor information: *Devices*, *Browsers*, *Operating Systems* and *Locations*. They are very superficial - you cannot drill down into the data. What you see in the screenshots here is the limit of how granular it gets.
 
 ![devices](devices.png)
 
@@ -94,7 +99,7 @@ I'd guess that most readers here are familiar with Google Analytics (GA), so I w
 * The depth of detail in GA is many times better than what we get from CloudFront charts and reports. 
 * GA has many more metrics and insights than CloudFront.
 
-These GA menus list only a subset of all the GA views, compared to 4 views in CloudFront:
+For example, these GA menus list only a subset of all the GA views, compared to only 4 views in CloudFront:
 
 ![google analytics menus](ga-menus.png)
 
