@@ -3,7 +3,7 @@
 
 *There is plenty of good advice in books and on the Internet about how to validate an idea. The authors may convincingly tell you what to do, but skip the execution part as if it's not important. This post is a step-by-step walk through an idea validation process I did recently.*
 
-I started writing on [Dev.To](https://dev.to/rimutaka) only two months ago. Call me a beginner. One of the main challenges for me is finding someone to proofread my posts before I publish them. I want to know if the posts are interesting and easy to read and what can be improved. This is how I got this idea about a proofreading community where we would review each other's posts and exchange  feedback. Better posts, happier readers, more reactions, right?
+I started writing on [Dev.To](https://dev.to/rimutaka) only two months ago. Call me a beginner. One of the main challenges for me is finding someone to proofread my posts before I publish them. I want to know if the posts are interesting and easy to read and what can be improved. This is how I got this idea about a proofreading community where writers would review each other's posts and exchange feedback. Better posts, happier readers, more reactions, right?
 
 Maybe not so!
 
@@ -58,15 +58,15 @@ You can download the entire document from Google Docs: https://docs.google.com/p
 
 ## Red flags and self-deception
 
-Idea validation is not about proving the idea itself, but the assumptions we make around it. Proving something to be true is actually quite hard. It is easier to [invert our model](https://fs.blog/2013/10/inversion/) to try to falsify the assumptions it is based on. The inversion won't guarantee project success, but it will save us from a predictable failure.
+Idea validation is not about proving the idea itself, but the assumptions we make around it. Proving them to be true is actually quite hard. It is easier to [invert our model](https://fs.blog/2013/10/inversion/) and try to falsify the assumptions it is based on. The inversion won't guarantee project success, but it will save us from a predictable failure.
 
 > Look out for what can go wrong.
 
-Some red flags popped up as soon as I started writing the pitch deck. We tend to dismiss those early warning signs that something's off as minor issues. After all, we want the project to succeed, so we ignore or downplay them, until the reality comes back to bite us. Let's not make that mistake ever again.
+Some red flags popped up as soon as I started writing the pitch deck. We tend to dismiss those early warning signs that something is off. After all, we want the project to succeed, so we ignore or downplay them until the reality comes back to bite us. Let's not make that mistake ever again.
 
 > Catalogue all issues, risks, and uncertainties.
 
-You'll find a few boxes like this one in my deck. I expanded and summarized them in a separate slide at the end of the presentation.
+You'll find a few panels like this one in my deck. I expanded and summarized them in a separate slide at the end of the presentation.
 
 ![warning box](slides-risks.png)
 
@@ -88,8 +88,8 @@ I love feedback like that. It is much more valuable than someone saying, yes, gr
 
 ## Let the mob tear it apart
 
-Talking to potential partners and customers can't be done over a pitch deck. They need at least something resembling a product.
-Registering a domain name and setting up a landing page may just enough for that.
+Talking to potential partners and customers can't be done over an investor pitch deck. They need to see something resembling a product.
+Registering a domain name and setting up a landing page may be just enough for that.
 
 My landing page went under https://feedback.farm. Check it out.
 
@@ -129,7 +129,7 @@ Putting the feedback aside, what is the weakest link in my chain of assumptions?
 
 My weakest link was in "*Channels*". I would not be able to reach such a diverse and dispersed audience as bloggers and technical writers without relying on channel partners.
 
-I set myself a deadline of 1 week to acquire at least one channel partner to help me reach my target audience. 10 days later I only had 2 "maybe". 
+I set myself a deadline of 1 week to acquire at least one channel partner to help me reach my target audience. 10 days later I only had 2 replies with lukewarm "maybe". 
 
 ## To build or not to build
 
