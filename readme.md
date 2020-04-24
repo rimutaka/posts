@@ -3,6 +3,10 @@
 ---
 
 
+## [How Lean Canvas saved me from a bad idea](anatomy-of-failed-validation/)
+> A practical guide to startup idea validation based on a real-life project
+
+
 ## [Cloud migration assessment with Microsoft DMA and SqlPackage tools](azure-sql-migration-series/cloud-migration-assessment-with-microsoft-dma-and-sqlpackage-tools/)
 > A brief guide for estimating migration cost from on-prem to Azure SQL
 
