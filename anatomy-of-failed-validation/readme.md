@@ -93,7 +93,7 @@ Registering a domain name and setting up a landing page may be just enough for t
 
 My landing page went under https://feedback.farm. Check it out.
 
-Reddit, ProductHunt, LinkedIn and Slack groups are the quickest way to gage the response from your target audience. The feedback there can be brutal, but some of it is very good. Ignore the brutes and listen to those who put some thought into it.
+Reddit, ProductHunt, LinkedIn and Slack groups are the quickest way to gauge the response from your target audience. The feedback there can be brutal, but some of it is very good. Ignore the brutes and listen to those who put some thought into it.
 
 ![online feedback](mob-response.png)
 
