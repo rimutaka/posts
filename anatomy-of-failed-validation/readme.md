@@ -121,9 +121,9 @@ Add any number of other reasons to it, but you are still none the wiser.
 
 ## The weakest link
 
-Putting the feedback aside, what is the weakest link in my chain of assumptions? Pick one.
+Putting the feedback aside, what is the weakest link in your chain of assumptions? Pick one.
 
-> Let's assume the problem is real, there is some demand and the solution is technically feasible. How am I going to reach and acquire users?
+> Let's assume the problem is real, there is some demand and the solution is technically feasible. How are you going to reach and acquire users?
 
 ![weak link](weak-link.png)
 
