@@ -3,7 +3,7 @@
 ---
 
 
-## [How Lean Canvas saved me from a bad idea](anatomy-of-failed-validation/)
+## [How Lean Canvas saved me from working on a bad idea](anatomy-of-failed-validation/)
 > A practical guide to startup idea validation based on a real-life project
 
 

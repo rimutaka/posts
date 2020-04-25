@@ -1,4 +1,4 @@
-# How Lean Canvas saved me from a bad idea
+# How Lean Canvas saved me from working on a bad idea
 #### A practical guide to startup idea validation based on a real-life project
 
 *There is plenty of good advice in books and on the Internet about how to validate an idea. The authors may convincingly tell you what to do, but skip the execution part as if it's not important. This post is a step-by-step walk through an idea validation process I did recently.*
