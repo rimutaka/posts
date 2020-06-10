@@ -3,24 +3,24 @@
 
 My grandfather spent 3 years on the frontline of WWII as a Telecommunications Officer. He had enough medals to make his jacket sag under their weight and plenty of shrapnel still left in his body to send airport metal detectors ringing. The airport incidents usually followed by apologies and a collective salute from the security staff as soon as they realized what triggered the detectors.
 
-He ones told me a gruesome story about a Soviet Commissar and his platoon. Those Commissars were political cronies, staunched communists known for sending soldiers to imminent death. They would rather kill their own people than allow them to retreat. Their defining features were impatience, incompetence and refusal to think. I always wondered what they looked like.
+He ones told me a gruesome story about a Soviet Commissar and his platoon. Those [Commissars](https://en.wikipedia.org/wiki/Political_commissar) were political cronies, staunched communists known for sending soldiers to imminent death. They would rather kill their own people than allow them to retreat. Their defining features were impatience, incompetence and refusal to think. I always wondered what they looked like.
 
 ## You are joining a rocket ship
 
 Some 15 years after my last conversation with my grandfather I was asked to help with improving a customer service centre for an e-commerce company. They were growing 30% year-on-year heading for $100M+ in turnover in 2020 and had some efficiency problems. It looked like a dream contract - a fast-growing company with "growth pains"!
 
-As Sheryl Sandberg said, 
+As Sheryl Sandberg [said](https://poetsandquants.com/2012/05/24/sheryl-sandbergs-class-day-speech-at-harvard-business-school/), 
 > If you're offered a seat on a rocket ship, don't ask what seat! Just get on.
 
 And so I did.
 
 ## The trajectory - where the rocket ship is heading
 
-Their customer communications were split between LiveChat, email and AWS Connect. The metrics looked bad, if they even existed. I started asking questions:
+Their customer communications were split across [LiveChat](https://www.livechat.com/), email and [AWS Connect](https://aws.amazon.com/connect/). The metrics looked bad, if they even existed. I started asking questions:
 
-* What is the key metric for the business, a.k.a. The North Star?
+* What is the key metric for the business, a.k.a. [The North Star](https://mixpanel.com/topics/north-star-metric/)?
 * What are the key metrics for the Customer Service?
-* Is the Customer Service a *cost center* or a *profit center*?
+* Is the Customer Service a [*cost center* or a *revenue generator*](https://www.salesforce.com/products/service-cloud/what-is-customer-service/)?
 
 It turned out no one had asked them those questions before. The General Manager (we'll call him GM) gave me his view:
 
