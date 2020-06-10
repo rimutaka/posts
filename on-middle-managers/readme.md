@@ -74,4 +74,4 @@ And that was the moment when I remembered my grandfather and his story about the
 
 I fixed what I could, uncovered some glaring security and code quality issues and bailed after 5 weeks. Life's too short to spend it in the company of Commissars, even on a rocket ship.
 
-[What it probably looked like]([https://youtubevideourl](https://www.youtube.com/watch?v=L8fWp-i-BGA))
+[![What it probably looked like](https://img.youtube.com/vi/L8fWp-i-BGA/0.jpg)](https://www.youtube.com/watch?v=L8fWp-i-BGA)
