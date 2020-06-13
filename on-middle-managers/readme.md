@@ -1,5 +1,5 @@
 # What Middle Managers and Soviet Commissars have in common
-#### And how to avoid joining companies with a bad culture
+#### How to avoid joining companies with a bad culture
 
 My grandfather spent 3 years on the frontline of WWII as a Telecommunications Officer. He had enough medals to make his jacket sag under their weight and plenty of shrapnel still left in his body to send airport metal detectors ringing. The airport incidents usually followed by apologies and a collective salute from the security staff as soon as they realized what triggered the detectors.
 
