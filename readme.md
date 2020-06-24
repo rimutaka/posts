@@ -47,7 +47,14 @@
 > A short story of learning a new skill everyone should have anyway
 
 
+## [What Middle Managers and Soviet Commissars have in common](on-middle-managers/)
+> How to avoid joining companies with a bad culture
+
+
 ## [You're a power-user? You are not wanted any more.](on-power-users/)
 > How to focus on a bigger market and not leave your early adopters behind
+
+
+## [AWS EC2 as a Rust development server with VSCode](rust-dev-on-ec2/)
 
 

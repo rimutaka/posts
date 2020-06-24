@@ -1,15 +1,14 @@
 # AWS EC2 as a Rust development server with VSCode
-#### Cost and performance analysis with a step-by-step setup guide
 
 I dread running `cargo build --release`.
 
 It's not that I dread build failures or compiler warnings - I dread the wait.
 
-My current Rust project takes about a minute to build on my laptop. It's not long enough to do something meaningful, like read HackerNews, but is long enough to make it feel agonizingly boring. If I don't have the money for a faster laptop, maybe I could build a really fast Rust development server in the cloud?
+My current Rust project takes about a minute to build on my laptop. It's not long enough to do something meaningful, like read HackerNews, but is long enough to make it feel agonizingly boring. If I don't have the money for a faster laptop, maybe I could build a really fast Rust development server on AWS?
 
 #### Cost of Intel NUC vs EC2 Instance
 
-A friend of mine is using an [Intel NUC bare-bones computer](https://www.intel.com/content/www/us/en/products/boards-kits/nuc/kits.html) as his local development server. It is quite powerful for its tiny size and will outperform by ageing Surface by a wide margin. We'll use it as a baseline for our comparison.
+A friend of mine is using an [Intel NUC bare-bones computer](https://www.intel.com/content/www/us/en/products/boards-kits/nuc/kits.html) as his local development server. It is quite powerful for its tiny size and will outperform my ageing Surface by a wide margin. We'll use the cost of a new NUC and the performance of my Surface as the baseline to compare different options.
 
 * **New NUC cost**: $1,000 incl shipping, credit card fees, etc
 * **Useful lifetime**: 2 years
@@ -23,11 +22,11 @@ Somehow I find it painful to part with $1,000 for a gadget I may not need in a f
 * **Realistic usage**: 100 hrs per month or $792 over 2 years
 * **Total cost**: $33 per month
 
-$33 per month vs. $1,000 upfront. That's an easy choice, but how much faster will the builds be?
+So, it comes down to $33 per month vs. $1,000 upfront. That's an easy choice, but how much faster will the builds be?
 
 #### Rust Compilation Benchmarks on EC2
 
-I compared Rust build time on different instance types using a very simple Rust project for logging AWS Lambda input in CloudWatch.
+I compared Rust build time on different instance types using a very simple Rust project for logging AWS Lambda input into CloudWatch.
 
 * **Source code**: https://github.com/rimutaka/rusty_lambdas/tree/master/json_logger
 * **AMI**: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20200408
@@ -58,15 +57,15 @@ Surprisingly, the new ARM-based instances (a1.xlarge, c6g.xlarge) were slower th
 
 ![average compilation time graph](average-compilation-time.png)
 
-*t2.micro* has the lowest cost per compilation. It is too slow for real-time builds, but it gets there eventually. I would use it for a build server in a CI/CD pipeline where the build duration is not critical.
+Another unexpected result was that *t2.micro* has the lowest cost per compilation. It is too slow for real-time builds, but it gets there eventually. I would use it for a build server in a CI/CD pipeline where the build duration is not critical.
 
 ![cost per compilation](cost-per-compilation.png)
 
-The time saved per build is relative to the size of the build. The next graph shows the ratio of improvement with EC2 time compared to my current Surface/VSCode/WSL2/Rust set up. I may be saving 15s per build on this test project, but some builds may run into minutes, so the higher the ratio the more time it saves. 
+The time saved per build is relative to the size of the build. The next graph shows the ratio of improvement with EC2 time compared to my current Surface/VSCode/WSL2/Rust setup. I may be saving 15s per build on this test project, but some builds may run into minutes, so the higher the ratio the more time it will save. 
 
 ![time savings ratio](time-savings-ratio.png)
 
-And finally, consider some measure of value vs the monthly cost. It looks like *c5* types provide the best value for money for real-time Rust builds. I arbitrary defined the value as *time_saving_ratio/cost_per_build*, which can be simplified to *1/(instance_cost * avg_compilation_time^2)*.
+And finally, consider some measure of *value* vs the *monthly cost*. It looks like *c5* types provide the best value for money for real-time Rust builds. I arbitrary defined *value = time_saving_ratio/cost_per_build*, which can be simplified to *value = 1/(instance_cost * avg_compilation_time^2)*.
 
 ![value vs monthly cost](value-monthly-cost.png)
 
@@ -118,17 +117,17 @@ We need to prepare the environment to easily start/stop the instance and deploy 
 
 1. Create 2 IAM policies (`StartStopDevEC2` and `UpdateOrInvokeLambda`)
 2. Create an EC2 role with `UpdateOrInvokeLambda` policy and attach it to the Rust instance
-4. Allocate a new IP and associate it with the Rust instance
+4. Allocate a new Elastic IP and associate it with the Rust instance
 5. Create a new AWS CLI user in IAM with `StartStopDevEC2` policy
 6. Copy the user credentials into `~/.aws/credentials` on your computer running VSCode. Add them as a named profile, e.g. I called mine `[vscode-syd-ld-start-stop]`
-7. Create an alarm inside EC2 instance monitoring for auto-stopping the Rust instance when not in use:
+7. Create an alarm inside EC2 instance monitoring tab for auto-stopping the Rust instance when not in use:
    * *Stop this instance* when *Sum* of *NetPacketsIn* < 100 for 1 Hr
    * Change the default name to something nice, like *Stop Rust Dev EC2*
 
 
 ### IAM policy templates
 
-Replace the region (*ap-southeast-2*) and instance ID (*i-026a4507e766ebe50*) in the templates with your values.
+Replace the a/c (*028534811986*) region (*ap-southeast-2, us-east-1*) and instance IDs (*i-026a4507e766ebe50*) in the templates with your values.
 
 This is `StartStopDevEC2` policy for starting your Rust EC2 instance from inside VSCode:
 ```json
@@ -166,14 +165,14 @@ This is `UpdateOrInvokeLambda` policy for updating Lambda function code from you
     ]
 }
 ```
-Launch the EC2 instance in the AWS location closest to you to minimize the latency. Lambdas can be deployed in the location with the rest of your infra - the latency from the Lambda to you is not critical. For me the nearest AWS data centre is in Sydney (*ap-southeast-2*) and my Lambdas live in *us-east-1*.
+Launch the EC2 instance in the AWS location closest to you to minimize the network latency. Lambdas can be deployed in a different location with the rest of your infra - the latency from the Lambda to you is not critical. For me, the nearest AWS data centre is in Sydney (*ap-southeast-2*) and my Lambdas live in *us-east-1*.
 
 
 ### VS Code configuration
 
 #### Starting / stopping Rust EC2 instance
 
-* Install [vscode-command-runner extension](https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner)
+* Install [vscode-command-runner](https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner) extension
 * Add [start-instances](https://docs.aws.amazon.com/cli/latest/reference/ec2/start-instances.html) custom command to VSCode `settings.json` with your instance, region and profile IDs:
 
 ```json
@@ -182,16 +181,16 @@ Launch the EC2 instance in the AWS location closest to you to minimize the laten
 }
 ```
 
-**Starting the instance**: press `Ctrl`+`Shift`+`R` and select `Start vscode-syd VM`. This shortcut works only if the VSCode is running locally. Give it a minute or so for the instance to start before connecting.
+**Starting the instance**: press `Ctrl`+`Shift`+`R` and select `Start vscode-syd VM`. This shortcut works only if your VSCode is running locally. Give it a minute or so for the instance to initialize before connecting to it.
 
 ![starting EC2](start-ec2.png)
 
 **Stopping the instance**: disconnect all SSH sessions and the instance will be stopped 1 hr later by the EC2 alarm described in *AWS Config* section. You can add `stop-instances` custom command if you want to stop it immediately.
 
 
-#### Connecting to the EC2 instance
+#### Connecting to the EC2 instance from VSCode
 
-* **Configure SSH details**: type "open ssh" in command pallet, select *Remote SSH: Open configuration file* and add the following entry. Note, *IdentityFile* should be located on the computer running VSCode.
+* **Configure SSH details**: type "ssh open" in the command pallet, select *Remote SSH: Open configuration file* and add the following entry. Note, *IdentityFile* should be located on the computer running your VSCode.
 ```
 Host rust-aws-syd-ld
   HostName 13.54.209.171
@@ -200,27 +199,25 @@ Host rust-aws-syd-ld
 ```
 
 * **Connect to the instance**:
-  * Open a remote window (click on `><` at the bottom left of the screen or search for "SSH Connect" in command pallet)
+  * Open a remote window (click on `><` at the bottom left corner of your VSCode screen or search for "SSH Connect" in the command pallet)
   * Watch for prompts at the top of the screen: select *Linux* and *Continue*
   * Let the VS install its components on the remote system
 
+Learn more about remote SSH connections in VSCode from https://code.visualstudio.com/docs/remote/ssh.
 
+#### Setting up Rust for VSCode
 
-Learn more about VSCode remote SSH connections from https://code.visualstudio.com/docs/remote/ssh.
-
-#### Setting up Rust for VS
-
-* Install `rust-analyzer` VSCode extension on the remote machine
+* Install [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer) VSCode extension on the remote machine
 * Consider other useful extensions: `Better TOML`, `Code Spell Checker`, `CodeLLDB`
 * Open the terminal and create a folder for Rust projects, e.g. `mkdir rust` + `cd rust`
 * Clone a demo lambda project `git clone https://github.com/rimutaka/rusty_lambdas.git`
-* Open any *.rs* file from the cloned project folder in VSCode and watch out for a message from `rust-analyzer` to install its server (bottom-right of the screen)
+* Open `json_logger` folder in your VSCode, then open *main.rs* file. Wait for a prompt from `rust-analyzer` to install its server (watch the bottom-right corner of the screen).
 
 ![rust analyzer server install](lang-server-msg.png)
 
 ### Build and deploy a demo Lambda function
 
-If you are still running on that *t2.micro* instance it's time to upgrade to *c5.xlarge* and build the demo project for deployment to AWS Lambda:
+If you are still running on that *t2.micro* instance it is time to upgrade to *c5.xlarge* and build the demo project for deployment to AWS Lambda:
 
 `cargo build --release --target x86_64-unknown-linux-musl`
 
@@ -228,11 +225,11 @@ Package the Lambda with Rust [custom runtime](https://docs.aws.amazon.com/lambda
 
 `cp ./target/x86_64-unknown-linux-musl/release/lambda ./bootstrap && zip lambda.zip bootstrap && rm bootstrap`
 
-[Push](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/lambda/update-function-code.html) the package to AWS Lambda. The Lambda must already exist for `update-function-code` command to work. Replace the region and function name with your IDs.
+[Push the code](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/lambda/update-function-code.html) to AWS Lambda. The Lambda must already exist for `update-function-code` command to work. Replace the region and function name with your IDs.
 
 `aws lambda update-function-code --region us-east-1 --function-name JsonLogger --zip-file fileb://lambda.zip`
 
-I noticed that IntelliSense within VSCode stops working from time to time. If that happens to you, search Command Pallet for *Rust Analyzer:Restart Server*. It should start picking errors and expanding the syntax as soon as the Rust Analyzer is restarted.
+I noticed that IntelliSense within VSCode stops working from time to time. If that happens to you, search the command pallet for *Rust Analyzer:Restart Server*. It should start picking up errors and expanding the syntax as soon as your Rust Analyzer restarted.
 
 ----
 
