@@ -5,14 +5,14 @@ My grandfather spent 3 years on the frontline of WWII as a Telecommunications Of
 
 He ones told me a dark story about a Soviet Commissar and his platoon. Those [Commissars](https://en.wikipedia.org/wiki/Political_commissar) were political cronies, staunched communists known for sending soldiers to imminent death. They would rather kill their own people than allow them to retreat. Their defining features were impatience, incompetence and refusal to think. I always wondered what they looked like until I met one recently in a very unexpected place - a growing e-commerce company. 
 
-## You are joining a rocket ship: watch out for commissars onboard
+## You are joining a rocket ship ...
 
 Some 15 years after my last conversation with my grandfather I was asked to help with improving a customer service centre for an e-commerce company. They were growing 30% year-on-year heading for $100M+ in turnover in 2020 and had some efficiency problems. It looked like a dream contract - a fast-growing company with "growth pains"!
 
 As Sheryl Sandberg [said](https://poetsandquants.com/2012/05/24/sheryl-sandbergs-class-day-speech-at-harvard-business-school/), 
 > If you're offered a seat on a rocket ship, don't ask what seat! Just get on.
 
-And so I did.
+And so I did, no questions asked.
 
 ## Calculate the ship's trajectory: are they heading for a win?
 
@@ -60,7 +60,7 @@ Simply put, it comes from the very top.
 
 A couple of founders hire their first programmer, who becomes the team lead when they hire 5 more. The founders instill the culture in the first few hires when everyone is hands-on and busy cutting code. They do it by example. It is not what they say - it is what they do and what they reward. 
 
-Those first few hires become managers as the company grows. An incompetent GM who makes inappropriate remarks about others or threatens to fire someone in a group email is a clear sign that the problems you will be dealing with are systemic, not the growth pains you hoped for. 🚩 They will go all the way up (someone hired that GM) and all the way down (people he hired or people trapped in their jobs).
+Those first few hires become managers as the company grows. An incompetent GM who makes inappropriate remarks about others or threatens to fire someone in a group email is a clear sign that the problems you will be dealing with are systemic, not the growth pains you hoped for. 🚩 They will go all the way up (someone hired that GM) and all the way down (people the GM hired or people trapped in their jobs).
 
 ## If there are red flags there will be commissars
 
@@ -80,6 +80,8 @@ I fixed what I could, uncovered some glaring security and code quality issues an
 
 ## What I learned
 
-> Ask plenty of questions to reveal the true colours of the management and the company culture before you commit to joining them.
+> **Ask plenty of questions to reveal the true colours of the management and the company culture before you commit to joining them.**
+
+---
 
 [![What it probably looked like](https://img.youtube.com/vi/L8fWp-i-BGA/0.jpg)](https://www.youtube.com/watch?v=L8fWp-i-BGA)
