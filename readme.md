@@ -48,7 +48,7 @@
 
 
 ## [What Middle Managers and Soviet Commissars have in common](on-middle-managers/)
-> How to avoid joining companies with a bad culture
+> How to avoid joining companies with bad culture
 
 
 ## [You're a power-user? You are not wanted any more.](on-power-users/)
