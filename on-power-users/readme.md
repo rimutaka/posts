@@ -41,7 +41,7 @@ Am I about to be fired?
 
 I had no choice, but to channel my frustration into making a [browser add-on to combine all my albums into a single playlist](https://github.com/rimutaka/spotify-play-all-saved-albums) with one click. Problem solved.
 
-![spotify play all albums addon](addon.png)
+[![spotify play all albums addon](addon.png)](https://github.com/rimutaka/spotify-play-all-saved-albums)
 
 ---
 
