@@ -3,7 +3,7 @@
 
 My grandfather spent 3 years on the frontline of WWII as a Telecommunications Officer. He had enough medals to make his jacket sag under their weight and plenty of shrapnel still left in his body to send airport metal detectors ringing. The airport incidents usually followed by apologies and a collective salute from the security staff as soon as they realized what triggered the detectors.
 
-He ones told me a dark story about a Soviet Commissar and his platoon. Those [Commissars](https://en.wikipedia.org/wiki/Political_commissar) were political cronies, staunched communists known for sending soldiers to imminent death. They would rather kill their own people than allow them to retreat. Their defining features were impatience, incompetence and refusal to think. I always wondered what they looked like until I met one recently in a very unexpected place - a growing e-commerce company. 
+He once told me a dark story about a Soviet Commissar and his platoon. Those [Commissars](https://en.wikipedia.org/wiki/Political_commissar) were political cronies, staunched communists known for sending soldiers to imminent death. They would rather kill their own people than allow them to retreat. Their defining features were impatience, incompetence and refusal to think. I always wondered what they looked like until I met one recently in a very unexpected place - a growing e-commerce company. 
 
 ## You are joining a rocket ship ...
 
