@@ -1,7 +1,7 @@
 # Cargo [features] explained with examples
 #### If you feel confused about all the intricacies of Cargo.toml *[features]* section you are not alone ([1](https://github.com/Geal/nom/issues/544),[2](https://github.com/chyh1990/yaml-rust/issues/44),[3](https://github.com/rust-lang/cargo/issues/4328)).
 
-*First of all, I assume that you have already read the docs at https://doc.rust-lang.org/cargo/reference/features.html to get some foundation of what *features* are before going through these examples. I did read the docs first too, but they left me confused until days later when I had to go much deeper into the topic to make some crates work together. What I think was missing from the docs for me was more examples with explanations how they work. This post was written to fill that gap.*
+*First of all, I assume that you have already read the docs at https://doc.rust-lang.org/cargo/reference/features.html to get some foundation of what "features" are before going through these examples. I did read the docs first too, but they left me confused until days later when I had to go much deeper into the topic to make some crates work together. What I think was missing from the docs for me was more examples with explanations how they work. This post was written to fill that gap.*
 
 #### What you will learn from this post
 
