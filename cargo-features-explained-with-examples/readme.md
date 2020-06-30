@@ -1,12 +1,12 @@
 # Cargo [features] explained with examples
 #### If you feel confused about all the intricacies of Cargo.toml *[features]* section you are not alone ([1](https://github.com/Geal/nom/issues/544),[2](https://github.com/chyh1990/yaml-rust/issues/44),[3](https://github.com/rust-lang/cargo/issues/4328)).
 
-*First of all, I assume that you have already read the docs at https://doc.rust-lang.org/cargo/reference/features.html to get some foundation of what features are before going through these examples. I did read the docs first too, but they left me confused until days later when I had to go much deeper into the topic to make some crates work together. What I think was missing from the docs for me was more examples with explanations how they work. This post was written to fill that gap.*
+*First of all, I assume that you have already read the docs at https://doc.rust-lang.org/cargo/reference/features.html to get some foundation of what *features* are before going through these examples. I did read the docs first too, but they left me confused until days later when I had to go much deeper into the topic to make some crates work together. What I think was missing from the docs for me was more examples with explanations how they work. This post was written to fill that gap.*
 
 #### What you will learn from this post
 
 
-* What those cryptic feature definitions in Cargo.toml actually mean.
+* What those cryptic *feature* definitions in Cargo.toml actually mean.
 * How to find the full list of features for a dependency even if they are not listed in the docs.
 * How `default_features` and `optional` attributes work.
 * How features work across multiple levels of dependencies.
@@ -14,7 +14,7 @@
 
 ## How to find all features of a package
 
-Crate docs can be very incomplete. Even if features are mentioned it's not always clear what they are for and how to use them. There is an easy way of finding out what features available and what may be behind them - check the *Cargo.toml* file of that package.
+Crate docs can be quite incomplete. Even if its *features* are mentioned it's not always clear what they are for and how to use them. There is an easy way of finding out what *features* available and what may be behind them - check *Cargo.toml* file of that package.
 
 Consider this description of *features* in [serde_dynamodb](https://docs.rs/serde_dynamodb/0.5.0/serde_dynamodb/) crate:
 
@@ -30,7 +30,7 @@ rusoto_dynamodb = { version = "0.43.0", default-features = false, optional = tru
 default = ["rusoto_dynamodb", "rusoto_dynamodb/default"]
 rustls = ["rusoto_dynamodb", "rusoto_dynamodb/rustls"]
 ```
-Checking the source Cargo.toml file revealed that there are actually 2 features: 
+From the above Cargo.toml file example you can see that there are 2 features: 
 * `default`, which is a special Cargo keyword for when you do not specify any features as in `serde_dynamodb = "0.5"`
 * `rustls`, which is only activated if specified as in `serde_dynamodb = { version="0.5", features=["rustls"]}`
 
@@ -47,7 +47,7 @@ rusoto_dynamodb = { version = "0.43.0", default-features = false, optional = tru
 into
 rusoto_dynamodb = { version = "0.43.0", default-features = false, features=["rustls"] }
 ```
-A feature definition can include a special notation to set features in a dependency:
+Both feature definition in *serde_dynamodb* include a special notation to set *features* in a dependency:
 
 * `"rusoto_dynamodb/default"` means set `default-features = true` for dependency `rusoto_dynamodb`
 * `"rusoto_dynamodb/rustls"` means apply feature `rustls` to dependency `rusoto_dynamodb`
@@ -90,11 +90,11 @@ dynomite-derive = { version = "*", path = "../dynomite-derive", optional = true 
 derive = ["dynomite-derive"]
 ```
 
-## More example of Cargo [features]
+## More examples of Cargo [features]
 
 Initially, features have to be declared in Cargo.toml of the package they are used in, that is, in your dependency. Then they are "referenced" in your Cargo.toml file to tell the dependency what you want from it.
 
-Here is an abridged example of feature declarations from [Dynomite, a DynamoDB library](https://github.com/softprops/dynomite/blob/master/dynomite/Cargo.toml).
+Here is an abridged example of feature declarations from [Dynomite](https://github.com/softprops/dynomite/blob/master/dynomite/Cargo.toml), a DynamoDB library.
 
 ```
 [dependencies]
@@ -114,10 +114,10 @@ derive = ["dynomite-derive"]
 magic = []
 ```
 
-That gives us a default and 3 optional features, `rustls`, `derive` and `magic`. You can use these features to tell Dynomite what you need from it in your project.
+That gives us *default* and 3 *optional* features, `rustls`, `derive` and `magic`. You can use these *features* to tell Dynomite what you need from it in your project.
 
 - *default* - activates if no feature is specified or even if another feature is specified without `default_features = false`. In the example above it lists the name of dependencies that should be included if this feature is activated.
-- *rustls* - activates if your Cargo.toml has something like `dynomite = {version = "0.8.2", default-features = false, features = ["rustls"]}`. Its declaration includes a list of dependencies and another feature - `derive`. So if you specify  `features = ["rustls"]` it is the same as `features = ["rustls", "derive"]`
+- *rustls* - activates if your Cargo.toml has something like `dynomite = {version = "0.8.2", default-features = false, features = ["rustls"]}`. Its declaration includes a list of dependencies and a name of another feature - `derive`. So if you specify  `features = ["rustls"]` it is the same as specifying `features = ["rustls", "derive"]`.
 - *derive* - this feature references a single dependency `dynomite-derive`. No other conditional dependencies would be included if only *derive* was requested in your Cargo.toml.
 - *magic* - this feature does not reference anything. It can only be used for conditional compilation with `#[cfg(feature="magic")]`
 
@@ -151,7 +151,7 @@ chrono = { version = "0.4", optional = true }
 
 ## Dependency of a dependency: beware that features are "additive"
 
-Cargo takes the union of all features enabled for a crate throughout the dependency graph. If multiple crates enable *mutually exclusive* features of another crate, then all those features will be enabled at build time. The result of that would depend on the implementation of the crate and may result in a compiler error if mutually exclusive crates or features are enabled.
+Cargo takes the union of all features enabled for a crate throughout the dependency graph. If multiple crates enable *mutually exclusive* features of another crate, then all those features will be enabled at build time. The result of that would depend on the implementation of the crate and may produce a compiler error if mutually exclusive crates or features are enabled.
 
 An example of this type of dependency would be *Crate X* that depends on *Crates A* and *Crate B*, while both *A* and *B* depend on *Crate awesome*.
 ```
