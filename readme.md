@@ -31,6 +31,10 @@
 > A quick guide with code examples for comparing codebase between large number of similar databases
 
 
+## [Cargo [features] explained with examples](cargo-features-explained-with-examples/)
+> If you feel confused about all the intricacies of Cargo.toml *[features]* section you are not alone ([1](https://github.com/Geal/nom/issues/544),[2](https://github.com/chyh1990/yaml-rust/issues/44),[3](https://github.com/rust-lang/cargo/issues/4328)).
+
+
 ## [Replacing Google Analytics with CloudFront metrics](cloudfront-analytics/)
 > A detailed look at AWS website monitoring tools built into AWS CloudFront
 

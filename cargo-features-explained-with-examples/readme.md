@@ -3,6 +3,15 @@
 
 *First of all, I assume that you have already read the docs at https://doc.rust-lang.org/cargo/reference/features.html to get some foundation of what features are before going through these examples. I did read the docs first too, but they left me confused until days later when I had to go much deeper into the topic to make some crates work together. What I think was missing from the docs for me was more examples with explanations how they work. This post was written to fill that gap.*
 
+#### What you will learn from this post
+
+
+* What those cryptic feature definitions in Cargo.toml actually mean.
+* How to find the full list of features for a dependency even if they are not listed in the docs.
+* How `default_features` and `optional` attributes work.
+* How features work across multiple levels of dependencies.
+
+
 ## How to find all features of a package
 
 Crate docs can be very incomplete. Even if features are mentioned it's not always clear what they are for and how to use them. There is an easy way of finding out what features available and what may be behind them - check the *Cargo.toml* file of that package.
@@ -47,7 +56,7 @@ A feature definition can include a special notation to set features in a depende
 
 ## default_features = false
 
-`default_features` attribute enables or disables any defaults provided by a package.
+`default_features` attribute enables or disables any defaults provided by the dependency.
 
 For example, `some_core` package uses *OpenSSL* by default with *RustLS* implementation as an optional feature. *OpenSSL* and *RustLS* are mutually exclusive, so to enable *RustLS* we have to disable the defaults. Your Cargo.toml would have a line like this:
 ```
@@ -192,8 +201,6 @@ The following combination will also result in the same compilation error because
 - Crate B: `awesome = { version = "1.0", default-features = false, features = ["rustls"] }`
 
 ## Useful links
-
-These are the resources that helped me understand this topic to the level where I could share it with you here.
 
 * https://www.reddit.com/r/rust/comments/7o7ov7/can_someone_explain_how_features_work_in_cargo/
 * https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html
