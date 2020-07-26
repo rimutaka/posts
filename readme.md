@@ -51,6 +51,10 @@
 > A short story of learning a new skill everyone should have anyway
 
 
+## [How to run stateful AWS Lambda functions in any language using custom runtimes](lambda-runtime-internals/)
+> An illustrated explanation of how Lambda environment works
+
+
 ## [What Middle Managers and Soviet Commissars have in common](on-middle-managers/)
 > How to avoid joining companies with bad culture
 
