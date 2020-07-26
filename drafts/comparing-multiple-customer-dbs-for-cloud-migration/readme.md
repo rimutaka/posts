@@ -1,18 +1,27 @@
-# A quick guide to comparing multiple customer DBs for cloud migration
-#### If you think your customer DBs codebase is identical, what are the odds it isn't?
+# Identifying code differences in multiple MS SQL databases
+#### A detailed guide to comparing and normalizing MS SQL codebase for cloud migration
 
-*Anyone working on a cloud migration of a system with one DB per customer will come to a point where knowing if the DBs are actually identical becomes critical. This guide offers one way of solving this problem with a few lines of code.* 
+*Migrating systems with multiple databases to Azure SQL can be a long and complicated process due to incompatibilities between MS SQL and Azure SQL. Identifying differences in code between databases becomes a critical migration step. This guide offers one way of identifying such differences with a few lines of SQL code.* 
+
+## What is code divergence?
+
+
+
+#### All DB code should be identical, but it is not
+
+
 
 ![Intro](intro.png)
 
-
-In my case all customer DBs were **supposed to be identical**, but we decided to check. I can think of some common reasons why the codebase may diverge: 
+There are many ways to partition customer data. One of them is to create a separate database per customer. Ideally, the codebase of those databases should be identical. In practice, it often diverges for a number of reasons:
 
 1. Customer-specific code was introduced over the lifetime of the system
 2. Some DBs didn't get updated because of DevOps failures
-3. New untracked changes have been introduced since the start of the migration
+3. Manual changes to the code were not properly tracked 
 
-My task was to **identify all changes since the beginning of the migration project** and find the most optimal way of merging any divergent code.
+In my case, I had to reconcile multiple versions of the same databases (same customer DB, different points in time) as well as to reconcile differences between different customer databases for cloud migration.
+
+## What is code divergence?
 
 Let's divide all SQL code into 3 categories:
 
