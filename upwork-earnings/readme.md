@@ -40,22 +40,17 @@ Assuming [you don't give up before landing that very first job](https://www.redd
 
 It's not all doom and gloom. You can make a decent living in some categories.
 
-13 out of 100 freelancers in my search for a Rust engineer had over $100k of total earnings.
+9 out of 100 freelancers in my search for a Rust engineer had over $100k of total earnings.
 
-* [$100,000](https://www.upwork.com/freelancers/~017778f12a2565f8f4)	
-* [$185,288](https://www.upwork.com/freelancers/~0147f8ce8730c3d633)	
-* [$185,288](https://www.upwork.com/freelancers/~017778f12a2565f8f4)	
-* [$210,023](https://www.upwork.com/freelancers/~0147f8ce8730c3d633)	
-* [$259,614](https://www.upwork.com/freelancers/~0144b974ba8a3d287f)	
-* [$277,418](https://www.upwork.com/freelancers/~01f24fb7d3fa638cfa)	
-* [$300,000](https://www.upwork.com/freelancers/~010ba56ab4bc5aba48)	
-* [$300,000](https://www.upwork.com/freelancers/~01364b7feb73f1d7ae)	
-* [$407,727](https://www.upwork.com/freelancers/~010f4e6ae0c1778aae)	
-* [$673,153](https://www.upwork.com/freelancers/~01aa1b7467b4eb49bc)	
-* [$673,153](https://www.upwork.com/freelancers/~01aa1b7467b4eb49bc)	
-* [$700,000](https://www.upwork.com/freelancers/~01aa1b7467b4eb49bc)	
-* [$900,000](https://www.upwork.com/freelancers/~01364b7feb73f1d7ae)	
-* [$1,000,000](https://www.upwork.com/freelancers/~01d95397aacaef6e88)	
+* [$185,288](https://www.upwork.com/freelancers/~017778f12a2565f8f4)
+* [$210,023](https://www.upwork.com/freelancers/~0147f8ce8730c3d633)
+* [$277,418](https://www.upwork.com/freelancers/~01f24fb7d3fa638cfa)
+* [$281,584](https://www.upwork.com/freelancers/~010ba56ab4bc5aba48)
+* [$295,363](https://www.upwork.com/freelancers/~0144b974ba8a3d287f)
+* [$425,345](https://www.upwork.com/freelancers/~010f4e6ae0c1778aae)
+* [$673,153](https://www.upwork.com/freelancers/~01aa1b7467b4eb49bc)
+* [$921,241](https://www.upwork.com/freelancers/~01364b7feb73f1d7ae)
+* [$1,000,000](https://www.upwork.com/freelancers/~01d95397aacaef6e88)
 
 ## $1,000,000 club - do you want to be a member?
 
@@ -67,11 +62,23 @@ Earning one million dollars sounds very inspirational. Who doesn't want to be a 
 
 * $1,000,000 / 18,076 hrs worked = $55 per hour
 * period over 10 years (started in 2011)
-* **$130k per year** if adjusted for inflation
+* **$117k per year** if adjusted for inflation and UpWork fees
 
 If we disregard the intangible values such as freedom this type of work brings, 
 
-> **$130k per year for someone with 10 years of full-stack experience is a rather low figure in today's world.**
+> **$117k per year for someone with 10 years of full-stack experience is a rather low figure in today's world.**
+
+The same high-earners list doesn't look as impressive on an annual basis, except maybe entry #3:
+
+* [$185,288](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~017778f12a2565f8f4/details) / 5 years
+* [$210,023](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~0147f8ce8730c3d633/details) / 12 years
+* [$277,418](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~01f24fb7d3fa638cfa/details) / 2 years
+* [$281,584](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~010ba56ab4bc5aba48/details) / 12 years
+* [$295,363](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~0144b974ba8a3d287f/details) / 6 years
+* [$425,345](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~010f4e6ae0c1778aae/details) / 11 years
+* [$673,153](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~01aa1b7467b4eb49bc/details) / 12 years
+* [$921,241](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~01364b7feb73f1d7ae/details) / 9 years
+* [$1,000,000](https://www.upwork.com/freelancers/api/v1/freelancer/profile/~01d95397aacaef6e88/details) / 10 years	
 
 In the end, UpWork is no better or worse than any other career path. It does a good job of putting you in front of employers. If you are good and want to be poached, you most likely will be, [despite what the Terms and Conditions](https://www.upwork.com/legal#OPTINGOUT) say.
 
@@ -79,4 +86,4 @@ In the end, UpWork is no better or worse than any other career path. It does a g
 
 ## Hey, are you open to offers of better employment or more contract work?
 
-We are building a [software engineer search engine](https://stackmuncher.com/about/developers) for devs like you and me to be discovered by employers looking for our skills. It is a community-first and fully open-source project. Weather you are a developer, designer or a marketer, a little bit of your help will go a long way. Head to https://github.com/stackmuncher/stm_app to find out more.
+We are building a [software engineer search engine](https://stackmuncher.com) for devs like you and me to be discovered by employers looking for our skills. It is a community-first and fully open-source project that takes no commission or charges placement fees. Head to https://stackmuncher.com/about/developers/ and let interesting and well-paid work find you 
