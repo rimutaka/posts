@@ -27,7 +27,7 @@ They all had a different story to tell, but the common theme was that the jobs o
 
 I looked at the total earnings of 100 freelancers in [search results for Rust](https://www.upwork.com/ab/profiles/search/?category_uid=531770282580668418&page=1&q=rust).
 
-![UpWork earnings breakdown](https://raw.githubusercontent.com/rimutaka/posts/master/upwork-earnings/upwork-earnings-breakdown.png)
+![UpWork earnings breakdown](https://raw.githubusercontent.com/rimutaka/posts/master/upwork-earnings/upwork-earnings-breakdown-2.png)
 
 Assuming [you don't give up before landing that very first job](https://www.reddit.com/r/Upwork/comments/plwc3u/im_just_tired_of_bidding_for_work_with_no/), the chances are:
 
