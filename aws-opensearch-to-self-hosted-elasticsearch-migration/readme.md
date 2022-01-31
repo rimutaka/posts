@@ -1,15 +1,41 @@
-# AWS OpenSearch to EC2-hosted ElasticSearch migration guide
+# Goodbye OpenSearch, hello self-hosted ElasticSearch on EC2
 
-This guide is a recording of steps I had to go through to successfully migrate my 2-node AWS ElasticSearch (OpenSearch) service to an ElasticSearch cluster running on EC2.
+#### An AWS OpenSearch to EC2-hosted ElasticSearch migration guide
 
-#### Reasons for migration:
+AWS ElasticSearch Service used to be a quick and easy option to add ElasticSearch to a project already hosted on AWS. It was forked into [AWS OpenSearch](https://aws.amazon.com/opensearch-service/) and is now only [nominally related to ElasticSearch](https://aws.amazon.com/blogs/opensource/introducing-opensearch/). That change created a dilemma to stay with this new AWS service or make a move elsewhere to stay with ElasticSearch.
 
-1. 70% savings
-2. Staying with ElasticSearch distro
-3. Expanded functionality and flexibility
+The future of OpenSearch doesn't look bright. [AWS OpenSearch project on github](https://github.com/opensearch-project/OpenSearch) has tanked since AWS took over while [ElasticSearch project](https://github.com/elastic/elasticsearch) is keeping up a steady pace.
+
+![AWS OpenSearch contributions](contributions_os.png)
+![Elastic project contributions](contributions_elastic.png)
+
+The other consideration against AWS OpenSearch is its high cost compared to other options.
+
+For example, using a mix of _on-demand_ and _spot_ EC2 instances running ElasticSearch can cost just 1/3 of the comparable OpenSearch configuration.
+
+![AWS OpenSearch cost comparison](opensearch-cost-comparison.png)
 
 
 ## Target EC2 configuration
+
+Mixing EC2 on-demand and spot instances is very cost-effective for non-mission-critical projects. If the ES cluster is configured correctly, the worst case scenario of all spot instances going down is degraded performance with no data loss. It is possible only if the shards are allocated so that there is at least one copy in the on-demand part of the cluster. This setting is addressed later in this guide.
+
+![ElasticSearch Spot Deployment](es-spot-deployment.png)
+
+The number of nodes can be easily scaled with addition of more *master* and *data* nodes from the same AMI. Both types can be run as either *spot* or *on-demand* as long as there are enough on-demand instances to hold at least one copy of every shard.
+
+
+## ElasticSearch fear factor
+
+ElasticSearch installation and configuration may look daunting at first. I was definitely intimidate by the JVM and all the "cluster-node-master-whatnot" terminology. It turned out to be easy to install and not too hard to configure. I did have to read a lot of their docs to fill in the blanks in their [official installation guide](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html). The rest of this post contains the exact steps I had to go through to create my ElasticSearch cluster and migrate all the data from AWS OpenSearch to it.
+
+#### I am not scared of you, ElasticSearch, any more!
+
+----
+
+## ES Node AMI
+
+The first task is to build an ElasticSearch Node AMI (ES Node AMI) to serve as a blueprint for any node type. The size of the instance is not important at this stage. It will be easy to resize after creation of the AMI.
 
 * **ElasticSearch version**: 7.16
 * **AWS AMI**: Ubuntu 20.04LTS
@@ -19,15 +45,13 @@ This guide is a recording of steps I had to go through to successfully migrate m
   * **Hostname type**: Resource name
   * **Enhanced monitoring**: Yes
 
-The size of the instance is not important at this stage. It will be easy to resize it after creation of our own ElasticSearch AMI (ES AMI).
-
-We only need to set up a single machine to create a reusable ES AMI. Any differences between ES nodes will be in the configuration applied after the ES AMI is launched.
+We only need to set up a single machine to create a reusable ES Node AMI. Any differences between ES nodes will be in the configuration applied after the AMI is launched.
 
 Start by launching a brand new Ubuntu 20.04 instance on EC2 with the above config.
 
 ## ES installation
 
-This guide is based on the [official ES install guide for Debian Package](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html).
+This guide is based on the [official ES install guide for Debian Package](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html). It was used to build a 3-node production cluster with a single *master* on-demand and 2 *data* spot instances.
 
 
 > #### Important note about Shell Scripts
@@ -412,7 +436,7 @@ Clean up with `DELETE /dev`.
 
 This call should always fail for *_es_anonymous_user*: `curl https://master.es.stackmuncher.com:9200/_cat/indices`
 
-## Create ES AMI
+## Create ES Node AMI
 
 The ES instance is now in a state ready to be reused for creating multiple *master* and *data* nodes by spinning more instances within the same VPC.
 
@@ -430,7 +454,7 @@ Create an AMI
 
 # Launching ES nodes
 
-An instance launched from ES AMI starts as a single node due to `discovery.type: single-node` setting and lack of cluster-level config. It needs to be re-configured to join a cluster as a *master* or a *data* node.
+An instance launched from ES Node AMI starts as a single node due to `discovery.type: single-node` setting and lack of cluster-level config. It needs to be re-configured to join a cluster as a *master* or a *data* node.
 
 ## Master node config 
 
@@ -544,7 +568,7 @@ Open Kibana at https://master.es.stackmuncher.com:5601/ and check cluster state 
 
 # Migrate production data from AWS OpenSearch to EC2 ES
 
-Backup and restore to S3 requires [S3 Repo Plugin](https://www.elastic.co/guide/en/elasticsearch/plugins/7.16/repository-s3-repository.html). It is installed on AWS OpenSearch and is part of our ES AMI.
+Backup and restore to S3 requires [S3 Repo Plugin](https://www.elastic.co/guide/en/elasticsearch/plugins/7.16/repository-s3-repository.html). It is installed on AWS OpenSearch and is part of our ES Node AMI.
 
 Backup / restore is done via [snapshot repositories](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-register-repository.html).
 
