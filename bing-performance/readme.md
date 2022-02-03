@@ -41,10 +41,12 @@ The number of StackMuncher pages in Google index is about the same as in Bing, y
 
 ![Google keywords](google-keywords.png)
 
-OK, maybe the StackMuncher isn't dominating some lucrative search category, but at least its own name is at the top of the keywords list. The rest of the keywords are GitHub profile names, which is what the site is about at the moment.
+OK, maybe StackMuncher isn't dominating some lucrative search category, but at least its own name is at the top of the keywords list. The rest of the keywords are GitHub profile names, which is what the site is about at the moment.
 
 
 ## How to block Bing
+
+With no way of telling Bing Crawler to slow down my only other choice was to block it completely.
 
 1. I updated my https://stackmuncher.com/robots.txt with this snippet and parsed it via [Bing's _robots.txt_ tester](https://www.bing.com/webmasters/robotstxttester):
 
