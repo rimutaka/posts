@@ -340,7 +340,7 @@ See https://stackoverflow.com/questions/39042799/cors-localhost-as-allowed-origi
 
 _FunctionURLAllowPublicAccess_ access policy is added by AWS when you choose _Auth type: NONE_ for the Function URL.
 
-It is not removed if you change to _Auth type: AWS_IAM_, but the public access is no longer available.
+It is not removed if you change to _Auth type: AWS_IAM_, but the public access is no longer available. See [AWS docs](https://docs.aws.amazon.com/lambda/latest/dg/urls-auth.html#urls-auth-none) for more details.
 
 ![Access control policy screenshot](./lambda-url-rbac.png)
 
