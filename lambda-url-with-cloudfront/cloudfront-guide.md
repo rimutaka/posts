@@ -1,4 +1,4 @@
-# AWS Lambda with CloudFront configuration options explained
+# AWS Lambda with CloudFront configuration guide
 
 This post explores different configuration options for invoking AWS Lambda via CloudFront to help you understand how different CloudFront and Lambda Function URL settings affect CORS and Authorization headers.
 
@@ -19,12 +19,12 @@ const lambdaResponse = await fetch(
 
 There are two possible downsides to this type of invocation:
 
-1. you cannot use a custom domain - it has to be an AWS-generated URL like `https://mq75dt64puwxk3u6gjw2rhak4m0bcmmi.lambda-url.us-east-1.on.aws`
-2. There is no server-side caching
+1. you cannot use a custom domain
+2. no server-side caching
 
 Calling your lambdas via CloudFront solves both of these issues.
 
-### Special considerations
+### Configuration complexity
 
 There is quite a bit of configuration to be done upfront to make a Lambda function work with CloudFront:
 
@@ -47,18 +47,18 @@ This section explains CloudFront terms and concepts that affect Lambda, CORS and
 - CloudFront can drop or overwrite some of the request and response headers
 - _Authorization_, _Host_ and other headers are used by AWS in communication between CloudFront and Lambda and may conflict with the same headers used by the web client
 
-**CORS headers** can be added in three different places creating confusion and duplication. Choose one that is most suitable for your use case:
-- by the code inside the lambda function,
-- by AWS if Lambda Function URL CORS were configured,
-- by CloudFront via _Response Headers Policy_.
+**CORS headers** can be added in three different places:
+- by the code inside the lambda function
+- by AWS if Lambda Function URL CORS were configured
+- by CloudFront via _Response Headers Policy_
 
 **Origin access control** settings tell CloudFront if it should sign requests sent to the Lambda Function URL.
-Signing requests takes over the _Authorization_ header so that you cannot forward it from the client app to the lambda.
+Signing requests [takes over the _Authorization_ header](https://docs.aws.amazon.com/IAM/latest/UserGuide/create-signed-request.html) so that you cannot forward it from the client app to the lambda.
 
 **Caching policy** settings of a _Behavior_ tell CloudFront which headers to use as caching keys:
 - headers included in the caching key are passed onto the lambda
 - you have to include your authorization key to avoid serving one user's response to another user
-- even if you include the _Authorization_ header in the key it may be overtaken by the AWS signature configured in the _Origin access control_
+- even if you include the _Authorization_ header in the key it may be taken over by the AWS signature configured in the _Origin access control_
 - you do not have to have a caching policy for the CORS to work
 - AWS recommends _CachingDisabled_ for Lambda URLs
 
@@ -66,15 +66,15 @@ Signing requests takes over the _Authorization_ header so that you cannot forwar
 - not all headers are forwarded by default
 - you should not forward the _Host_ header (it returns an error at runtime if you do)
 - CloudFront may drop or replace some headers
+- this policy [depends on the options selected in the Caching Policy](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-how-origin-request-policies-and-cache-policies-work-together.html)
 - _AllViewerExceptHostHeader_ policy works fine with CORS and is the default choice for Lambda URLs
-- you can choose _None_ if you don't need to pass any authorization headers and generate the CORS response inside CloudFront
 
 **Response headers policy** tells CloudFront what headers to add to the response:
-- you can choose _None_ if the lambda function handles the CORS response
+- you can choose _None_ if the [lambda function handles the CORS response](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html?icmpid=docs_lambda_help#urls-cors)
 - you can choose a suitable managed CORS policy from the list to complement or overwrite the lambda's response
 - you can create a custom policy to complement or overwrite the lambda's response
 
-**Header quotas** set [limits](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-custom-headers) to how much data you can put into custom headers.
+**Header quotas** set [limits](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-custom-headers) to how much data you can put into custom headers:
 - Max length of a header value: 1,783 characters
 - Max length of all headers: 10,240 characters
 
@@ -244,13 +244,11 @@ Use one of the [AWS-managed CORS policies](https://docs.aws.amazon.com/AmazonClo
 AWS Lambda
 - [AWS Lambda debugging tool](https://github.com/rimutaka/lambda-debugger-runtime-emulator)
 - [Lambda URL access control](https://docs.aws.amazon.com/lambda/latest/dg/urls-auth.html#urls-auth-iam)
-- [AWS Lambda CORS](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html?icmpid=docs_lambda_help#urls-cors)
 
 CloudFront
 - [Cache policy headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html#cache-policy-headers)
 - [Request and response behavior for custom origins](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html)
 - [Configure CloudFront to forward the Authorization header](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
-- [How origin request policies and cache policies work together](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-how-origin-request-policies-and-cache-policies-work-together.html)
 
 CORS
 - [CORS overview on MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
