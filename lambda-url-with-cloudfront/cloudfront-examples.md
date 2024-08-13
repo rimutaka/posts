@@ -1,6 +1,7 @@
-# AWS Lambda with CloudFront: caching, CORS and authorization examples
+# AWS Lambda with CloudFront: CORS, authorization and caching examples
 
-This post is a collection of examples with different configuration options for invoking AWS Lambda via CloudFront. 
+This post is a collection of examples with different configuration options for invoking AWS Lambda via CloudFront.
+It demonstrates how configuration changes affect the lambda function invocations and request/response headers.
 
 ## Example 1: CORS not required, no authorization headers, no caching
 
