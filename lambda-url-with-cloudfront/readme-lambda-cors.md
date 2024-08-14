@@ -35,9 +35,9 @@ Access-Control-Allow-Headers: authorization
 Access-Control-Allow-Origin: https://localhost:8080
 ```
 
-### Option 1: Returning CORS from the lambda function's code
+### Option 1: Returning CORS from the lambda function handler
 
-It is not hard to return a few headers from your lambda code. For example, these 4 lines of Rust code do the job:
+It is not hard to return a few headers from your lambda handler. For example, these 4 lines of Rust code do the job:
 ```rust
     let mut headers = HeaderMap::new();
     headers.append("Access-Control-Allow-Origin", HeaderValue::from_static("https://localhost:8080"));
@@ -50,13 +50,13 @@ On the other hand, it is an extra coding, testing and maintenance effort. Any ch
 If your client app sends one OPTIONS request for every GET/POST it doubles the number of invocations.
 See the [Access-Control-Max-Age header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age) to reduce repeat OPTIONS calls by the same client.
 
-Returning CORS from the lambda function's code may be a good option if you need extra control over handling the OPTIONS requests.
+Returning CORS from the lambda function handler may be a good option if you need extra control over processing HTTP OPTIONS requests.
 
 ### Option 2: Configuring CORS headers in AWS Lambda settings
 
 Function URLs can be configured to let AWS handle CORS preflight requests (HTTP OPTIONS method) and add necessary headers to all the other HTTP methods after your lambda returns its response.
 
-This is a simpler and more reliable option that does not require any changes to the function's code.
+This is a simpler and more reliable option that does not require any changes to the function handler.
 
 ![CORS config option checkbox](./lambda-url-cors-checkbox.png)
 
@@ -86,15 +86,15 @@ The following config allows public access to the function via its URL.
 ![Access control policy screenshot](./lambda-url-rbac.png)
 
 You need both the _Auth type: NONE_ setting and a resource-based policy statement to allow public access.
-Having one or the other results in _403 Permission Denied_.
+Having one setting without the other results in _403 Permission Denied_.
 
-AWS automatically adds the required _FunctionURLAllowPublicAccess_ access policy when you choose _Auth type: NONE_ in the console.
+AWS automatically adds the required _FunctionURLAllowPublicAccess_ access policy to the Lambda function when you choose _Auth type: NONE_ in the console.
 
 ## Request/response examples for different configuration options in detail
 
 This section contains examples of HTTP headers exchanged between the web browser, AWS and the lambda function to help us understand how different configuration options affect the headers.
 
-### Lambda URL request/response example without CORS protocol
+### Example 1: Lambda URL request/response without CORS protocol
 
 1. Enable public access to your lambda function URL as explained earlier
 2. Do not enable CORS settings
@@ -102,9 +102,10 @@ This section contains examples of HTTP headers exchanged between the web browser
 
 
 Your Function URL config should look similar to this:
+
 ![Basic lambda URL config screenshot](./lambda-url-config-basic.png)
 
-A sample lambda URL call that does not require the CORS protocol
+A sample lambda URL call that does not require the CORS protocol:
 ```javascript
 const lambdaResponse = await fetch("https://mq75dt64puwxk3u6gjw2rhak4m0bcmmi.lambda-url.us-east-1.on.aws/");
 ``` 
@@ -130,7 +131,7 @@ Pragma: no-cache
 Cache-Control: no-cache
 ```
 
-The lambda function receives all the headers sent by the browser as part of the request payload and some additional AWS headers (see 6 headers starting with _x-_ at the end of the list).
+The lambda function receives all the headers sent by the browser as part of the request payload and some additional AWS headers (see 6 headers starting with _x-_ at the end of the list):
 
 ```json
 {
@@ -162,7 +163,7 @@ Function URL configuration with _CORS: not enabled_ option invokes the lambda fo
 Use this configuration if your lambda handles responses to the _HTTP OPTIONS_ method with the [CORS protocol](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
 
 
-### Example of a CORS request/response handled by lambda's code
+### Example 2: CORS headers added by lambda handler
 
 This example has the same Lambda URL configuration as in the previous example:
 
@@ -192,7 +193,7 @@ This OPTIONS request can be translated as the browser asking our lambda: can I s
 
 If the lambda replies _Yes_, the browser sends the GET request. If the lambda replies something other than _Yes_, the GET request is never sent and the script gets a CORS error.
 
-Our lambda would see this list of headers for the above OPTIONS request (see last 3 lines):
+Our lambda would see this list of headers for the above OPTIONS request (see 3 lines at the end for CORS):
 ```json
 {
   "accept": "*/*",
@@ -219,7 +220,7 @@ Our lambda would see this list of headers for the above OPTIONS request (see las
 }
 ```
 
-Assuming that our lambda function can handle CORS protocol and is happy with the request, the response would have the necessary CORS headers starting with _access-control-allow-_ to tell the browser that the lambda is happy to receive the GET request, as in this example (see last 4 lines):
+Assuming that our lambda function can handle CORS protocol and is happy with the request, the response would have the necessary CORS headers starting with _access-control-allow-*_ to tell the browser that the lambda is happy to receive the GET request, as in this example (see 4 lines at the end for CORS):
 
 ```
 HTTP/1.1 200 OK
@@ -272,12 +273,14 @@ Access-Control-Allow-Origin: https://localhost:8080
 Access-Control-Allow-Credentials: true
 ```
 
-The above response has to contain `Access-Control-Allow-Origin: https://localhost:8080` and `Access-Control-Allow-Credentials: true` headers for the browser to accept it (last 2 lines).
+The above response has to contain `Access-Control-Allow-Origin: https://localhost:8080` and `Access-Control-Allow-Credentials: true` headers for the browser to accept it (2 lines at the end).
 
 
-### Example of CORS request/response handled by AWS
+### Example 3: CORS request/response headers added by AWS
 
-In this example, we added CORS to the Function URL configuration that says that the lambda is happy to receive HTTP GET/POST requests containing _Authorization_ and other headers from https://localhost:8080. It is also happy to receive some credentials.
+This example shows how CORS headers can be configured out of the lambda handler:
+- allow HTTP GET/POST requests containing _Authorization_ and other headers from https://localhost:8080
+- allow sending credentials
 
 ![Lambda CORS config](./lambda-url-cors.png)
 
@@ -292,7 +295,7 @@ The browser does the same CORS protocol as before with the same CORS headers:
 
 ![Browser request sequence with OPTIONS/GET](./browser-request-options-get.png)
 
-Unlike the previous example where the OPTIONS request was handled by the lambda code, no lambda invocation takes place for HTTP OPTIONS requests which are handled by AWS.
+Unlike the previous example where the OPTIONS request was handled by the lambda handler, no lambda invocation takes place for HTTP OPTIONS requests which are handled by AWS.
 
 This response was generated by AWS and contains the settings configured in the CORS section of the Function URL:
 
@@ -312,9 +315,8 @@ Access-Control-Allow-Credentials: true
 
 The last four lines of response tell the browser it may continue with more GET/POST requests.
 
-Unlike the previous example, the lambda code was not involved in handling the CORS protocol - it was handled by AWS outside of the function's code.
-
-As you can see, this is a much easier option than handling CORS inside the lambda code.
+Unlike the previous example, the lambda handler was not involved in handling the CORS protocol - it was processed by AWS outside of the function handler.
+This is an easier way than handling CORS inside the lambda handler.
 
 
 ## A few "gotchas"
@@ -323,7 +325,7 @@ This section lists a few minor things that can suck up a lot of your time.
 
 ### Add one header per line in the CORS configuration form
 
-Since the HTTP headers are sent as a comma-separated list it seems logical to enter the list in a single _Allow headers_ box (red highlight).
+Since the HTTP headers are sent as a comma-separated list it seems logical to enter the entire list in a single _Allow headers_ box (red highlight).
 AWS will let you save the invalid config and produce an incorrect response to the OPTIONS request later.
 
 Enter one header per line (green highlight). Remember that header names are case-insensitive.
@@ -338,19 +340,19 @@ See https://stackoverflow.com/questions/39042799/cors-localhost-as-allowed-origi
 
 ### Adding and deleting _FunctionURLAllowPublicAccess_ access policy
 
-_FunctionURLAllowPublicAccess_ access policy is added by AWS when you choose _Auth type: NONE_ for the Function URL.
+_FunctionURLAllowPublicAccess_ policy is added by AWS when you choose _Auth type: NONE_ for the Function URL.
 
 It is not removed if you change to _Auth type: AWS_IAM_, but the public access is no longer available. See [AWS docs](https://docs.aws.amazon.com/lambda/latest/dg/urls-auth.html#urls-auth-none) for more details.
 
 ![Access control policy screenshot](./lambda-url-rbac.png)
 
-Removing _FunctionURLAllowPublicAccess_ access policy while _Auth type: NONE_ blocks public access to the lambda's URL. 
+Removing _FunctionURLAllowPublicAccess_ policy while _Auth type: NONE_ blocks public access to the lambda's URL. 
 
 ### Header double-up
 
 AWS adds `access-control-allow-origin` and `access-control-allow-credentials` CORS headers regardless of their presence in the response from the lambda. 
 
-If our lambda returned CORS headers and the Function URL was configured to return CORS as well, the response would become invalid because `access-control-allow-origin` and `access-control-allow-credentials` would be included twice (see 4 last line):
+If our lambda returned CORS headers and the Function URL was configured to return CORS as well, the response would become invalid because `access-control-allow-origin` and `access-control-allow-credentials` would be included twice (see 4 lines at the end):
 
 ```
 HTTP/1.1 200 OK
