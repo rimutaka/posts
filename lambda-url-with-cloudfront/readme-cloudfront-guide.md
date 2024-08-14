@@ -1,6 +1,6 @@
 # AWS Lambda with CloudFront configuration guide
 
-This post explores different configuration options for invoking AWS Lambda via CloudFront to help you understand how different CloudFront and Lambda Function URL settings affect CORS and Authorization headers.
+This post explores different configuration options for invoking AWS Lambda via CloudFront to demonstrate how different CloudFront and Lambda Function URL settings affect CORS and authorization headers.
 
 ## Overview
 
@@ -42,7 +42,7 @@ This guide complements the [official AWS documentation](https://docs.aws.amazon.
 This section explains CloudFront terms and concepts that affect Lambda, CORS and the _Authorization_ header.
 
 **General**
-- CloudFront forwards all requests to the Lambda URL, including OPTIONS
+- CloudFront forwards always forwards uncached HTTP OPTIONS requests to the Lambda URL
 - CloudFront can cache OPTIONS responses
 - CloudFront can drop or overwrite some of the request and response headers
 - _Authorization_, _Host_ and other headers are used by AWS in communication between CloudFront and Lambda and may conflict with the same headers used by the web client
@@ -53,14 +53,14 @@ This section explains CloudFront terms and concepts that affect Lambda, CORS and
 - by CloudFront via _Response Headers Policy_
 
 **Origin access control** settings tell CloudFront if it should sign requests sent to the Lambda Function URL.
-Signing requests [takes over the _Authorization_ header](https://docs.aws.amazon.com/IAM/latest/UserGuide/create-signed-request.html) so that you cannot forward it from the client app to the lambda.
+Signing requests [takes over the _Authorization_ header](https://docs.aws.amazon.com/IAM/latest/UserGuide/create-signed-request.html) and drops the value sent by the client app.
 
 **Caching policy** settings of a _Behavior_ tell CloudFront which headers to use as caching keys:
 - headers included in the caching key are passed onto the lambda
 - you have to include your authorization key to avoid serving one user's response to another user
 - even if you include the _Authorization_ header in the key it may be taken over by the AWS signature configured in the _Origin access control_
-- you do not have to have a caching policy for the CORS to work
-- AWS recommends _CachingDisabled_ for Lambda URLs
+- you do not have to have a caching policy for the CORS protocol to work
+- AWS recommends _CachingDisabled_ policy for Lambda URLs
 
 **Origin request policy** settings tell CloudFront which headers to forward to the lambda:
 - not all headers are forwarded by default
@@ -91,7 +91,7 @@ The following config lets CloudFront access a Lambda function via its URL in the
 
 We will add the CloudFront IAM policy to the Lambda at a later stage.
 
-Setting your function URL access control to _Auth type: NONE_ makes the function public, which also includes CloudFront.
+Setting your function URL access control to _Auth type: NONE_ allows anyone, including CloudFront to invoke it.
 
 ## Lambda URL CORS headers
 
@@ -110,7 +110,7 @@ CloudFront can cache HTTP OPTIONS responses regardless of which of the above str
 
 A Lambda function should be added as an _Origin_ of a CloudFront distribution.
 
-In this example _client-sync lambda_ origin is linked to _/sync.html_ path, so if a client app makes a `fetch()` call to `https://d9tskged4za87.cloudfront.net/sync.html` the request will be forwarded to _client-sync lambda_ for processing.
+In this example, _client-sync lambda_ origin is linked to _/sync.html_ path. For example, if a client app makes a `fetch()` call to `https://d9tskged4za87.cloudfront.net/sync.html` the request will be forwarded to _client-sync lambda_ for processing.
 
 ![CloudFront Origins](./cf-origins.png)
 
@@ -124,7 +124,7 @@ In this example _client-sync lambda_ origin is linked to _/sync.html_ path, so i
 - **origin path:** leave blank
 - **name:** give it an informative name, spaces are OK; it will not be used as an ID
 
-### Origin access control affects the use of Authorization header
+### Origin access control affects the use of _Authorization_ header
 
 Create a new _Origin Access Policy_ that can be shared between multiple lambda functions.
 
@@ -197,7 +197,7 @@ The above configuration should be sufficient to correctly process CORS and autho
 
 #### Caching disabled
 
-AWS recommends disabling caching for Lambda functions because most of the requests are unique and should not be cached. See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-policy-caching-disabled
+AWS [recommends disabling caching for Lambda functions](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-policy-caching-disabled) because most of the requests are unique and should not be cached.
 
 ![Caching policy disabled](./cf-caching-policy-disabled.png)
 
@@ -208,7 +208,7 @@ Some headers, including the _Authorization_ header, are [removed by CloudFront i
 _Authorization_ header gets [special treatment](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#RequestCustomClientAuth) from AWS:
 
 - CloudFront does not pass it to lambda functions for GET/HEAD requests unless it is included in the caching policy
-- CloudFront forwards it with other HTTP methods
+- CloudFront forwards it for _DELETE_, _PATCH_, _POST_, and _PUT_ HTTP methods
 
 The above rule is affected by a different setting:
 - AWS uses the _Authorization_ header for IAM authentication, so even if you have _Auth type: AWS_IAM_ in the Function URL settings the _Authorization_ header will not reach the lambda no matter what the caching policy says
@@ -220,11 +220,11 @@ One workaround for passing _Authorization_ header to lambdas is to:
 If disabling Lambda Function URL IAM authentication is not an option:
 - keep _Auth type: AWS_IAM_ in the Function URL settings
 - use a custom header to pass the authentication value from your web client to your lambda, e.g. `x-myapp-auth: Bearer some-long-JWT-value`
-- add the custom header to the caching policy to prevent responses to one authenticated user served to someone else
+- always add the custom authorization header to the caching policy to prevent responses to one authenticated user served to someone else
 
 ## Origin request policy
 
-Use [AllViewerExceptHostHeader](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html#managed-origin-request-policy-all-viewer-except-host-header) or create a custom one that excludes the _Host_ header from being forwarded to lambda.
+Use [AllViewerExceptHostHeader](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html#managed-origin-request-policy-all-viewer-except-host-header) or create a custom policy that excludes the _Host_ header from being forwarded to lambda.
 
 ![Origin request policy](./cf-origin-request-policy.png)
 
@@ -233,7 +233,7 @@ The _AllViewer-_ part of the name of that origin request policy is misleading be
 
 ## Response headers policy
 
-Use this policy only if you want CloudFront to add CORS and other headers to the response on top or instead of what the lambda returned in its response. For example, this sample policy adds all the necessary CORS headers to let scripts running in your local DEV environment (https://localhost:8080) call the lambda function:
+Use this policy only if you want CloudFront to add CORS and other headers to the response on top or instead of what the lambda returns in its response. For example, this sample policy adds all the necessary CORS headers to let scripts running in your local DEV environment (https://localhost:8080) call the lambda function:
 
 ![sample response policy](./cf-response-policy-with-cors.png)
 
